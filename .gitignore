@@ -138,6 +138,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-ideas.md
+*.md
 test.js
 test_index.htm
+package-lock.json

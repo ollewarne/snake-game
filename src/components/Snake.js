@@ -1,101 +1,165 @@
-import { DIRS, defaultKeyMap, shadeColor, posEq } from "../utils//utils.js";
-import { CELL_SIZE, INITIAL_LENGTH } from "../components/game.js";
+import { defaultKeyMap } from "../utils/keymap.js";
+import { Vector } from "../utils/Vector.js";
+
+function generateSnakeColors() {
+    const hue = Math.floor(Math.random() * 360);
+    const saturation = 70;
+
+    return {
+        color: `hsl(${hue}, ${saturation}%, 45%)`,
+        alternateColor: `hsl(${hue}, ${saturation}%, 35%)`
+    }
+}
 
 export class Snake {
-  constructor(opts = {}) {
-    this.id = opts.id ?? Math.random().toString(36).slice(2, 8);
-    this.color = opts.color ?? "#4caf50";
-    this.alternateColor = opts.alternateColor ?? "#2e7d32";
-    this.alive = true;
-    this.score = 0;
+    constructor(opts = {}) {
+        this.id = opts.id ?? Math.random().toString(36).slice(2, 8);
 
-    const start = opts.startPos ?? { x: 20, y: 15 };
-    const dir = opts.dir ?? DIRS.right;
-    this.dir = { ...dir };
+        const colors = opts.color ? null : generateSnakeColors();
+        this.color = opts.color ?? colors.color;
+        this.alternateColor = opts.alternateColor ?? colors.alternateColor;
+        this.alive = true;
+        this.score = 0;
 
-    this.body = [];
-    for (let i = 0; i < INITIAL_LENGTH; i++) {
-      this.body.push({
-        x: start.x - i * dir.x,
-        y: start.y - i * dir.y
-      });
+        const start = opts.startPos ?? { x: 20, y: 15 };
+        const dir = opts.dir ?? Vector.RIGHT;
+        this.dir = dir.clone();
+        this.lastMoveDir = dir.clone();
+
+        this.body = [];
+        for (let i = 0; i < opts.initialLength ?? 2; i++) {
+            this.body.push(new Vector(
+                start.x - i * dir.x,
+                start.y - i * dir.y
+            ));
+        }
+
+        this.pendingGrow = 0;
+        this.keyMap = opts.keyMap ?? defaultKeyMap();
     }
 
-    this.pendingGrow = 0;
-    this.keyMap = opts.keyMap ?? defaultKeyMap();
-    this.lastMoveDir = { ...this.dir };
-  }
-
-  setDirectionFromName(name) {
-    if (!this.alive) return;
-    const next = DIRS[name];
-    if (!next) return;
-    // prevent reversing
-    if (this.lastMoveDir.x + next.x === 0 && this.lastMoveDir.y + next.y === 0) return;
-    this.dir = { ...next };
-  }
-
-  move() {
-    if (!this.alive) return null;
-    const head = this.body[0];
-    const newHead = { x: head.x + this.dir.x, y: head.y + this.dir.y };
-    this.body.unshift(newHead);
-
-    if (this.pendingGrow > 0) {
-      this.pendingGrow--;
-    } else {
-      this.body.pop();
+    setDirection(newDir) {
+        if (!this.alive || !newDir) return;
+        if (this.lastMoveDir.isOpposite(newDir)) return;
+        this.dir = newDir.clone();
     }
 
-    this.lastMoveDir = { ...this.dir };
-    return newHead;
-  }
-
-  grow(n = 1) {
-    this.pendingGrow += n;
-    this.score += n;
-  }
-
-  checkBorderDeath(maxCols, maxRows) {
-    const h = this.body[0];
-    if (h.x < 0 || h.x >= maxCols || h.y < 0 || h.y >= maxRows) {
-      this.alive = false;
-      return true;
+    setDirectionFromName(name) {
+        const dir = Vector.fromName(name);
+        if (dir) this.setDirection(dir);
     }
-    return false;
-  }
 
-  checkSelfCollision() {
-    const h = this.body[0];
-    for (let i = 1; i < this.body.length; i++) {
-      if (posEq(h, this.body[i])) {
-        this.alive = false;
-        return true;
-      }
+    get head() {
+        return this.body[0];
     }
-    return false;
-  }
 
-  checkCollisionWithOther(other) {
-    const h = this.body[0];
-    for (const seg of other.body) {
-      if (posEq(h, seg)) {
-        this.alive = false;
-        return true;
-      }
+    move() {
+        if (!this.alive) return null;
+
+        const newHead = this.head.add(this.dir);
+        this.body.unshift(newHead);
+
+        if (this.pendingGrow > 0) {
+            this.pendingGrow--;
+        } else {
+            this.body.pop();
+        }
+
+        this.lastMoveDir = this.dir.clone();
+        return newHead;
     }
-    return false;
-  }
 
-  draw(ctx) {
-    const head = this.body[0];
-    ctx.fillStyle = this.color;
-    ctx.fillRect(head.x * CELL_SIZE, head.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-    for (let i = 1; i < this.body.length; i++) {
-      const seg = this.body[i];
-      ctx.fillStyle = (i % 2 === 0) ? this.alternateColor : shadeColor(this.color, -12);
-      ctx.fillRect(seg.x * CELL_SIZE + 1, seg.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+    grow(n = 1) {
+        this.pendingGrow += n;
+        this.score += n;
     }
-  }
+
+    shrink(n = 1) {
+        const toRemove = Math.min(n, this.body.length - 1);
+        for (let i = 0; i < toRemove; i++) {
+            this.body.pop();
+        }
+
+        //Snake must have at least a head and a tail to be alive
+        if (this.body.length <= 2) {
+            this.alive = false;
+        }
+    }
+
+    checkBorderDeath(maxCols, maxRows) {
+        const h = this.head;
+        if (h.x < 0 || h.x >= maxCols || h.y < 0 || h.y >= maxRows) {
+            this.alive = false;
+            return true;
+        }
+        return false;
+    }
+
+    checkSelfCollision() {
+        const h = this.head;
+        for (let i = 1; i < this.body.length; i++) {
+            if (h.equals(this.body[i])) {
+                this.alive = false;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkCollisionWithOther(other) {
+        const h = this.body[0];
+        for (const seg of other.body) {
+            if (posEq(h, seg)) {
+                this.alive = false;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    occupies(pos) {
+        return this.body.some(seg => seg.equals(pos));
+    }
+
+    // for multiplayer
+    toJSON() {
+        return {
+            id: this.id,
+            color: this.color,
+            alternateColor: this.alternateColor,
+            alive: this.alive,
+            score: this.score,
+            body: this.body.map(v => v.toJSON()),
+            dir: this.dir.toJSON(),
+            ammo: this.ammo,
+            armor: this.armor
+        };
+    }
+
+    static fromJSON(data) {
+        const snake = new Snake({
+            id: data.id,
+            color: data.color,
+            alternateColor: data.alternateColor,
+            startPos: Vector.fromJSON(data.body[0]),
+            dir: Vector.fromJSON(data.dir)
+        });
+        snake.alive = data.alive;
+        snake.score = data.score;
+        snake.body = data.body.map(v => Vector.fromJSON(v));
+        snake.ammo = data.ammo ?? 0;
+        snake.armor = data.armor ?? 0;
+        return snake;
+    }
+
+    // Update from server data (for remote players)
+    updateFromJSON(data) {
+        this.alive = data.alive;
+        this.score = data.score;
+        this.body = data.body.map(v => Vector.fromJSON(v));
+        this.dir = Vector.fromJSON(data.dir);
+        this.ammo = data.ammo ?? 0;
+        this.armor = data.armor ?? 0;
+    }
+
 }

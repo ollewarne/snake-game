@@ -1,7 +1,6 @@
 import { Vector } from "../utils/Vector.js";
 import { Snake } from "./Snake.js";
 import { Pickup } from "./Pickup.js";
-import { Projectile } from "./Projectile.js";
 import { CONFIG } from "../config.js";
 
 export class Game {
@@ -9,12 +8,11 @@ export class Game {
 
         this.gridCols = opts.gridCols ?? CONFIG.gridCols;
         this.gridRows = opts.gridRows ?? CONFIG.gridRows;
-        this.tickMS = opts.tickMS ?? CONFIG.tickMs;
+        this.tickMS = opts.tickMS ?? CONFIG.tickMS;
 
         // game state
         this.snakes = [];
         this.pickups = [];
-        this.projectiles = [];
         this.tickTimer = null;
         this.isRunning = false;
 
@@ -23,10 +21,11 @@ export class Game {
     }
 
     init() {
+        console.log("game init called");
         this.stop();
         this.snakes = [];
         this.pickups = [];
-        this.projectiles = [];
+
     }
 
     addSnake(opts = {}) {
@@ -83,35 +82,6 @@ export class Game {
         return pickup;
     }
 
-    spawnRandomPickup() {
-        // Weighted random: 60% food, 25% ammo, 15% armor
-        const roll = Math.random();
-        if (roll < 0.60) return this.spawnPickup("food");
-        if (roll < 0.85) return this.spawnPickup("ammo");
-        return this.spawnPickup("armor");
-    }
-
-
-    // shooting projectiles
-
-    fireProjectile(snake) {
-        if (!snake.alive || snake.ammo <= 0) return null;
-
-        snake.ammo--;
-
-        const spawnPos = snake.head.add(snake.dir);
-
-        const projectile = new Projectile({
-            ownerId: snake.id,
-            position: spawnPos,
-            direction: snake.dir.clone(),
-            color: snake.color
-        });
-
-        this.projectiles.push(projectile);
-        return projectile;
-    }
-
     // game loop
 
     tick() {
@@ -119,8 +89,6 @@ export class Game {
             this.onGameOver(this.getState());
             return;
         }
-
-        this.updateProjectiles();
 
         this.moveSnakes();
 
@@ -133,33 +101,6 @@ export class Game {
         this.onStateChange(this.getState());
     }
 
-    updateProjectiles() {
-        for (const projectile of this.projectiles) {
-            if (!projectile.alive) continue;
-
-            projectile.move();
-
-            if (projectile.isOutOfBounds(this.gridCols, this.gridRows)) {
-                projectile.alive = false;
-                continue;
-            }
-
-            for (const snake of this.snakes) {
-                if (projectile.checkHit(snake)) {
-                    projectile.alive = false;
-
-                    if (snake.armor > 0) {
-                        snake.armor--;
-                    } else {
-                        snake.shrink(1);
-                    }
-                    break;
-                }
-
-            }
-        }
-        this.projectiles = this.projectiles.filter(p => p.alive);
-    }
 
     moveSnakes() {
         for (const snake of this.snakes) {
@@ -218,7 +159,7 @@ export class Game {
     maintainPickups() {
         //make sure there is always three pickups on the grid
         while (this.pickups.length < 3) {
-            this.spawnRandomPickup();
+            this.spawnPickup("food");
         }
     }
 
@@ -236,26 +177,11 @@ export class Game {
         return false;
     }
 
-    handleAction(action, playerId) {
-        const snake = this.snakes.find(s => s.id === playerId);
-        if (!snake || !snake.alive) return false;
-
-        switch (action) {
-            case "fire":
-                return this.fireProjectile(snake) !== null;
-            default:
-                return false;
-        }
-    }
-
-
-
     // handling state for the game
     getState() {
         return {
             snakes: this.snakes,
             pickups: this.pickups,
-            projectiles: this.projectiles,
             isGameOver: this.snakes.every(s => !s.alive)
         };
     }
@@ -264,7 +190,6 @@ export class Game {
         return {
             snakes: this.snakes.map(s => s.toJSON()),
             pickups: this.pickups.map(p => p.toJSON()),
-            projectiles: this.projectiles.map(p => p.toJSON())
         };
     }
 
@@ -282,7 +207,6 @@ export class Game {
         const serverIds = new Set(data.snakes.map(s => s.id));
         this.snakes = this.snakes.filter(s => serverIds.has(s.id));
 
-        this.pickups = data.pickups.map(p = Pickup.fromJSON(p));
-        this.projectiles = data.projectiles.map(p => Projectile.fromJSON(p));
+        this.pickups = data.pickups.map(p => Pickup.fromJSON(p));
     }
 }

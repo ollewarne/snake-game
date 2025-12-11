@@ -5,18 +5,13 @@ export const CONFIG = {
     gridRows: 50,
 
     // Timing
-    tickMs: 100,
+    tickMS: 100,
 
     // Snake
-    initialLength: 2,
+    initialLength: 3,
     growOnFood: 1,
 
     // Colors
     gridColor: "#071218",
-    foodColor: "#ffeb3b",
-
-    // Combat
-    projectileSpeed: 2,      // Cells per tick
-    armorColor: "#3b82f6",
-    ammoColor: "#ef4444",
+    foodColor: "#941909",
 };

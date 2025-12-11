@@ -23,9 +23,7 @@ function updateUI(state) {
 
     let text = `Snakes alive: ${state.snakes.filter(s => s.alive).length}. `;
     for (const s of state.snakes) {
-        const ammoText = s.ammo > 0 ? ` [${s.ammo}ammo]` : "";
-        const armorText = s.armor > 0 ? ` [${s.armor}armor]` : "";
-        text += `${s.id}: ${s.score}${ammoText}${armorText}${s.alive ? "" : "(dead)"}  `;
+        text += `${s.id}: ${s.score}${s.alive ? "" : "(dead)"}  `;
     }
     statusEl.textContent = text;
 }
@@ -43,15 +41,15 @@ function startGame() {
 
     const player = game.addSnake({
         id: localPlayerId,
-        color: "#4caf50",
-        alternateColor: "#2e7d32",
+        color: null,
+        alternateColor: null,
         startPos: new Vector(10, 15),
         dir: Vector.RIGHT
     });
 
     game.spawnPickup("food");
     game.spawnPickup("food");
-    game.spawnPickup("ammo");
+    game.spawnPickup("food");
 
     input.playerId = player.id;
 

@@ -3,7 +3,6 @@ export class InputHandler {
         this.game = game;
         this.playerId = playerId;
         this.boundKeyDown = this.handleKeyDown.bind(this);
-        this.fireKey = " ";
     }
 
     start() {
@@ -16,14 +15,6 @@ export class InputHandler {
 
     handleKeyDown(event) {
         const key = event.key;
-
-        //fire projectile
-        if (key === this.fireKey) {
-            if (this.game.handleAction("fire", this.playerId)) {
-                event.preventDefault();
-            }
-            return;
-        }
 
         //movement
         if (this.game.handleKeyPress(key, this.playerId)) {

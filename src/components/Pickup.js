@@ -12,17 +12,7 @@ export class Pickup {
     }
 
     applyTo(snake) {
-        switch (this.type) {
-            case "food":
-                snake.grow(1);
-                break;
-            case "ammo":
-                snake.ammo += 1;
-                break;
-            case "armor":
-                snake.armor += 1;
-                break;
-        }
+        snake.grow(1);
     }
 
     toJSON() {
@@ -30,7 +20,7 @@ export class Pickup {
             id: this.id,
             position: this.position.toJSON(),
             type: this.type
-        };
+        }
     }
 
     static fromJSON(data) {

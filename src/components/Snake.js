@@ -74,18 +74,6 @@ export class Snake {
         this.score += n;
     }
 
-    shrink(n = 1) {
-        const toRemove = Math.min(n, this.body.length - 1);
-        for (let i = 0; i < toRemove; i++) {
-            this.body.pop();
-        }
-
-        //Snake must have at least a head and a tail to be alive
-        if (this.body.length <= 2) {
-            this.alive = false;
-        }
-    }
-
     checkBorderDeath(maxCols, maxRows) {
         const h = this.head;
         if (h.x < 0 || h.x >= maxCols || h.y < 0 || h.y >= maxRows) {
@@ -109,7 +97,7 @@ export class Snake {
     checkCollisionWithOther(other) {
         const h = this.body[0];
         for (const seg of other.body) {
-            if (posEq(h, seg)) {
+            if (h.equals(seg)) {
                 this.alive = false;
                 return true;
             }
@@ -131,8 +119,6 @@ export class Snake {
             score: this.score,
             body: this.body.map(v => v.toJSON()),
             dir: this.dir.toJSON(),
-            ammo: this.ammo,
-            armor: this.armor
         };
     }
 
@@ -147,8 +133,6 @@ export class Snake {
         snake.alive = data.alive;
         snake.score = data.score;
         snake.body = data.body.map(v => Vector.fromJSON(v));
-        snake.ammo = data.ammo ?? 0;
-        snake.armor = data.armor ?? 0;
         return snake;
     }
 
@@ -158,8 +142,6 @@ export class Snake {
         this.score = data.score;
         this.body = data.body.map(v => Vector.fromJSON(v));
         this.dir = Vector.fromJSON(data.dir);
-        this.ammo = data.ammo ?? 0;
-        this.armor = data.armor ?? 0;
     }
 
 }

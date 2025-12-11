@@ -9,11 +9,11 @@ export class Renderer {
         this.gridRows = CONFIG.gridRows;
 
         canvas.width = this.cellSize * this.gridCols;
-        canvas.heigth = this.cellSize * this.gridRows;
+        canvas.height = this.cellSize * this.gridRows;
     }
 
     clear() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.heigth);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     drawGrid() {
@@ -71,25 +71,11 @@ export class Renderer {
             const color = (i % 2 === 0) ? snake.alternateColor : snake.color;
             this.drawCell(seg, color, 1);
         }
-
-        if (snake.ammo > 0) {
-            ctx.fillStyle = CONFIG.ammoColor;
-            for (let i = 0; Math.min(snake.ammo, 5); i++) {
-                ctx.beginPath();
-                ctx.arc(
-                    head.x * this.cellSize + 4 + i * 4,
-                    head.y & this.cellSize - 4,
-                    2, 0, Math.PI * 2
-                )
-            }
-        }
     }
 
     drawPickup(pickup) {
         const colors = {
             food: CONFIG.foodColor,
-            ammo: CONFIG.ammoColor,
-            armor: CONFIG.armorColor
         };
         const color = colors[pickup.type] ?? CONFIG.foodColor;
         this.drawCell(pickup.position, color, 3);
@@ -103,23 +89,8 @@ export class Renderer {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        const icons = { food: "♦", ammo: "•", armor: "■" };
+        const icons = { food: "♦" };
         ctx.fillText(icons[pickup.type] ?? "?", cx, cy);
-    }
-
-    drawProjectile(projectile) {
-        const ctx = this.ctx;
-        const pos = projectile.position;
-
-        ctx.fillStyle = projectile.color ?? "#ff0000";
-        ctx.beginPath();
-        ctx.arc(
-            pos.x * this.cellSize + this.cellSize / 2,
-            pos.y * this.cellSize + this.cellSize / 2,
-            this.cellSize / 4,
-            0, Math.PI * 2
-        );
-        ctx.fill();
     }
 
     render(gameState) {
@@ -128,10 +99,6 @@ export class Renderer {
 
         for (const pickup of gameState.pickups) {
             this.drawPickup(pickup);
-        }
-
-        for (const projectile of gameState.projectiles) {
-            this.drawProjectile(projectile);
         }
 
         for (const snake of gameState.snakes) {

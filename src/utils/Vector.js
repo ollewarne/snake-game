@@ -21,7 +21,7 @@ export class Vector {
     }
 
     isOpposite(otherVector) {
-        return this.x + otherVector === 0 && this.y + otherVector.y === 0;
+        return this.x + otherVector.x === 0 && this.y + otherVector.y === 0;
     }
 
     clone() {

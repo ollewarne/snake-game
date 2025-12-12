@@ -16,6 +16,8 @@ export class Game {
         this.tickTimer = null;
         this.isRunning = false;
 
+        this.timeRemainingMS = null;
+
         this.onStateChange = opts.onStateChange ?? (() => { });
         this.onGameOver = opts.onGameOver ?? (() => { });
     }
@@ -38,6 +40,7 @@ export class Game {
         if (this.isRunning) return;
         this.isRunning = true;
         this.tickTimer = setInterval(() => this.tick(), this.tickMS);
+        this.timeRemainingMS = CONFIG.gameDurationMS;
     }
 
     stop() {
@@ -85,7 +88,8 @@ export class Game {
     // game loop
 
     tick() {
-        if (!this.snakes.some(s => s.alive)) {
+        this.timeRemainingMS -= this.tickMS;
+        if (this.timeRemainingMS <= 0) {
             this.onGameOver(this.getState());
             return;
         }
@@ -101,18 +105,29 @@ export class Game {
         this.onStateChange(this.getState());
     }
 
+    respawnSnake(snake) {
+        const spawn = CONFIG.spawnPoints[Math.floor(Math.random() * CONFIG.spawnPoints.length)];
+        let length = snake.body.length;
+        snake.body = [];
+        setTimeout(() => {
+            snake.respawn(length, spawn.startPos, spawn.dir);
+        }, CONFIG.respawnTimer)
+    }
+
 
     moveSnakes() {
         for (const snake of this.snakes) {
             if (!snake.alive) continue;
             snake.move();
-            snake.checkBorderDeath(this.gridCols, this.gridRows);
+            if (snake.checkBorderDeath(this.gridCols, this.gridRows)) {
+                this.respawnSnake(snake);
+            };
         }
     }
 
     checkSnakeCollisions() {
         for (const snake of this.snakes) {
-            if (snake.alive) snake.checkSelfCollision();
+            if (snake.checkSelfCollision()) this.respawnSnake(snake);
         }
 
         for (let i = 0; i < this.snakes.length; i++) {
@@ -121,7 +136,10 @@ export class Game {
 
             for (let j = 0; j < this.snakes.length; j++) {
                 if (i === j) continue;
-                if (snake.checkCollisionWithOther(this.snakes[j])) break;
+                if (snake.checkCollisionWithOther(this.snakes[j])) {
+                    this.respawnSnake(snake);
+                    break;
+                };
             }
         }
 
@@ -136,7 +154,7 @@ export class Game {
         for (const [, snakesAtPos] of heads) {
             if (snakesAtPos.length > 1) {
                 for (const snake of snakesAtPos) {
-                    snake.alive = false;
+                    snake.respawnedSnake(snake);
                 }
             }
         }
@@ -182,7 +200,8 @@ export class Game {
         return {
             snakes: this.snakes,
             pickups: this.pickups,
-            isGameOver: this.snakes.every(s => !s.alive)
+            timeRemaining: Math.round(this.timeRemainingMS / 1000),
+            isGameOver: (this.timeRemainingMS <= 0)
         };
     }
 

@@ -49,21 +49,9 @@ export class Renderer {
     drawSnake(snake) {
         if (!snake.alive && snake.body.length === 0) return;
 
-        const ctx = this.ctx;
         const head = snake.head;
 
         this.drawCell(head, snake.color, 0);
-
-        if (snake.armor > 0) {
-            ctx.strokeStyle = CONFIG.armorColor;
-            ctx.lineWidth = 3;
-            ctx.strokeRect(
-                head.x * this.cellSize + 2,
-                head.y * this.cellSize + 2,
-                this.cellSize - 4,
-                this.cellSize - 4
-            )
-        }
 
         //draw snake body
         for (let i = 0; i < snake.body.length; i++) {

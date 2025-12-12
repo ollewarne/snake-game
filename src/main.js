@@ -2,6 +2,7 @@ import { Game } from "./components/Game.js";
 import { Renderer } from "./rendering/Renderer.js";
 import { InputHandler } from "./utils/InputHandler.js";
 import { Vector } from "./utils/Vector.js";
+import { CONFIG } from "./config.js";
 
 const canvas = document.getElementById("game");
 const statusEl = document.getElementById("status");
@@ -21,9 +22,9 @@ const input = new InputHandler(game, localPlayerId);
 function updateUI(state) {
     renderer.render(state);
 
-    let text = `Snakes alive: ${state.snakes.filter(s => s.alive).length}. `;
+    let text = `Time remaining: ${state.timeRemaining} `;
     for (const s of state.snakes) {
-        text += `${s.id}: ${s.score}${s.alive ? "" : "(dead)"}  `;
+        text += `${s.id}: ${s.score}`;
     }
     statusEl.textContent = text;
 }
@@ -39,12 +40,14 @@ function handleGameOver(state) {
 function startGame() {
     game.init();
 
+    const spawn = CONFIG.spawnPoints[Math.floor(Math.random() * CONFIG.spawnPoints.length)];
+
     const player = game.addSnake({
         id: localPlayerId,
         color: null,
         alternateColor: null,
-        startPos: new Vector(10, 15),
-        dir: Vector.RIGHT
+        startPos: spawn.startPos,
+        dir: spawn.dir
     });
 
     game.spawnPickup("food");

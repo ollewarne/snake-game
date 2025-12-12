@@ -1,3 +1,4 @@
+import { CONFIG } from "../config.js";
 import { defaultKeyMap } from "../utils/keymap.js";
 import { Vector } from "../utils/Vector.js";
 
@@ -19,12 +20,13 @@ export class Snake {
         this.color = opts.color ?? colors.color;
         this.alternateColor = opts.alternateColor ?? colors.alternateColor;
         this.alive = true;
-        this.score = 0;
 
         const start = opts.startPos ?? { x: 20, y: 15 };
         const dir = opts.dir ?? Vector.RIGHT;
         this.dir = dir.clone();
         this.lastMoveDir = dir.clone();
+
+        this.longestLength = CONFIG.initialLength;
 
         this.body = [];
         for (let i = 0; i < opts.initialLength ?? 2; i++) {
@@ -71,7 +73,11 @@ export class Snake {
 
     grow(n = 1) {
         this.pendingGrow += n;
-        this.score += n;
+        if (this.body.length >= this.longestLength) this.longestLength += n;
+    }
+
+    get score() {
+        return this.longestLength;
     }
 
     checkBorderDeath(maxCols, maxRows) {
@@ -107,6 +113,15 @@ export class Snake {
 
     occupies(pos) {
         return this.body.some(seg => seg.equals(pos));
+    }
+
+    respawn(length, position, dir) {
+        if (this.longestLength < length) this.longestLength = length;
+        this.body = [position.clone()],
+        this.dir = dir.clone();
+        this.lastMoveDir = dir.clone();
+        this.pendingGrow = CONFIG.initialLength - 1;
+        this.alive = true;
     }
 
     // for multiplayer

@@ -44,15 +44,17 @@ export class Game {
     }
 
     stop() {
+        console.log("stop", this.tickTimer);
         if (this.tickTimer) {
             clearInterval(this.tickTimer);
             this.tickTimer = null;
         }
         this.isRunning = false;
+        console.log("stopped", this.tickTimer);
     }
 
 
-    //spawning snakes and items
+    //spawning items
 
     findFreePosition() {
         const occupied = new Set();
@@ -91,6 +93,8 @@ export class Game {
         this.timeRemainingMS -= this.tickMS;
         if (this.timeRemainingMS <= 0) {
             this.onGameOver(this.getState());
+            this.stop();
+            console.log("we still ticking?");
             return;
         }
 

@@ -5,6 +5,8 @@ export const CONFIG = {
     gridCols: 60,
     gridRows: 50,
 
+    playerLimit: 4,
+
     // Timing
     tickMS: 100,
     gameDurationMS: 180000, // 3 minutes

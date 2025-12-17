@@ -29,7 +29,7 @@ export class Snake {
         this.longestLength = CONFIG.initialLength;
 
         this.body = [];
-        for (let i = 0; i < opts.initialLength ?? 2; i++) {
+        for (let i = 0; i < opts.initialLength ?? 3; i++) {
             this.body.push(new Vector(
                 start.x - i * dir.x,
                 start.y - i * dir.y
@@ -151,7 +151,7 @@ export class Snake {
         return snake;
     }
 
-    // Update from server data (for remote players)
+    // Update from host player?
     updateFromJSON(data) {
         this.alive = data.alive;
         this.score = data.score;

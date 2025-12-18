@@ -8,7 +8,7 @@ export class GameLobby {
         this.onStart = null;
         this.onLeave = null;
         this.onSendMessage = null;
-        this.music = new Audio('../../assets/lobbyMusic.mp3')
+        this.music = new Audio('./assets/lobbyMusic.mp3')
         this.build();
     }
 

@@ -3,7 +3,7 @@ import { CONFIG } from "../config.js";
 export class GameScreen {
     constructor() {
         this.elements = {};
-        this.music = new Audio('../../assets/gameMusic.mp3')
+        this.music = new Audio('./assets/gameMusic.mp3')
         this.build();
     }
 

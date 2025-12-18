@@ -7,7 +7,7 @@ import { Renderer } from './rendering/Renderer.js';
 import { InputHandler } from './utils/InputHandler.js';
 import { CONFIG } from './config.js';
 
-const SERVER_URL = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/net`;
+const SERVER_URL = 'wss://mpai.se/net';
 const APP_ID = 'snake-game-it-up-yo';
 const MAX_PLAYERS = CONFIG.playerLimit || 4;
 

@@ -8,7 +8,7 @@ import { InputHandler } from './utils/InputHandler.js';
 import { CONFIG } from './config.js';
 
 const SERVER_URL = 'wss://mpai.se/net';
-const APP_ID = 'snake-game-it-up-yo';
+const APP_ID = 'ultra-snake-game';
 const MAX_PLAYERS = CONFIG.playerLimit || 4;
 
 let api = null;

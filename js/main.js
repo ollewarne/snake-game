@@ -7,7 +7,7 @@ import { Renderer } from './rendering/Renderer.js';
 import { InputHandler } from './utils/InputHandler.js';
 import { CONFIG } from './config.js';
 
-const SERVER_URL = 'wss://mpai.se/net';
+const SERVER_URL = 'wss://mpapi.se/net';
 const APP_ID = 'ultra-snake-game';
 const MAX_PLAYERS = CONFIG.playerLimit || 4;
 

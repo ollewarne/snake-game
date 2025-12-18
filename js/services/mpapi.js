@@ -32,7 +32,6 @@ export class mpapi {
             }
         });
 
-        console.log('Setting up WebSocket event listeners');
 
 
         this.socket.addEventListener('message', (event) => {
@@ -42,7 +41,6 @@ export class mpapi {
             } catch (e) {
                 return;
             }
-            console.log('Raw message received:', payload);
 
             if (!payload || typeof payload !== 'object') {
                 return;
@@ -89,7 +87,6 @@ export class mpapi {
                     this.onList(data);
 
             } else if (cmd === 'joined' || cmd === 'left' || cmd === 'closed' || cmd === 'game') {
-                console.log(`Received ${cmd} command`);
                 this.listeners.forEach((listener) => {
                     try {
                         listener(cmd, messageId, clientId, data);

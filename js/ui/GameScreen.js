@@ -29,7 +29,7 @@ export class GameScreen {
 
         document.body.appendChild(this.container);
 
-        this.music.volume = 0.1;
+        this.music.volume = 0.05;
         this.music.play();
     }
 

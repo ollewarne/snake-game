@@ -5,12 +5,10 @@ import { CONFIG } from "../config.js";
 
 export class Game {
     constructor(opts = {}) {
-
         this.gridCols = opts.gridCols ?? CONFIG.gridCols;
         this.gridRows = opts.gridRows ?? CONFIG.gridRows;
         this.tickMS = opts.tickMS ?? CONFIG.tickMS;
 
-        // game state
         this.snakes = [];
         this.pickups = [];
         this.tickTimer = null;
@@ -23,11 +21,10 @@ export class Game {
     }
 
     init() {
-        console.log("game init called");
         this.stop();
         this.snakes = [];
         this.pickups = [];
-
+        this.timeRemainingMS = CONFIG.gameDurationMS;
     }
 
     addSnake(opts = {}) {
@@ -36,25 +33,35 @@ export class Game {
         return snake;
     }
 
+    removeSnake(id) {
+        console.log('removeSnake called:', id);
+        const index = this.snakes.findIndex(s => s.id === id);
+        console.log('Found at index:', index);
+        if (index !== -1) {
+            this.snakes.splice(index, 1);
+            console.log('Snake removed, remaining:', this.snakes.map(s => s.id));
+        }
+    }
+
+    getSnake(id) {
+        return this.snakes.find(s => s.id === id);
+    }
+
     start() {
         if (this.isRunning) return;
         this.isRunning = true;
         this.tickTimer = setInterval(() => this.tick(), this.tickMS);
-        this.timeRemainingMS = CONFIG.gameDurationMS;
     }
 
     stop() {
-        console.log("stop", this.tickTimer);
         if (this.tickTimer) {
             clearInterval(this.tickTimer);
             this.tickTimer = null;
         }
         this.isRunning = false;
-        console.log("stopped", this.tickTimer);
     }
 
-
-    //spawning items
+    // Spawning items
 
     findFreePosition() {
         const occupied = new Set();
@@ -87,23 +94,20 @@ export class Game {
         return pickup;
     }
 
-    // game loop
+    // Game loop
 
     tick() {
         this.timeRemainingMS -= this.tickMS;
         if (this.timeRemainingMS <= 0) {
+            this.timeRemainingMS = 0;
             this.onGameOver(this.getState());
             this.stop();
-            console.log("we still ticking?");
             return;
         }
 
         this.moveSnakes();
-
         this.checkSnakeCollisions();
-
         this.checkPickups();
-
         this.maintainPickups();
 
         this.onStateChange(this.getState());
@@ -115,9 +119,8 @@ export class Game {
         snake.body = [];
         setTimeout(() => {
             snake.respawn(length, spawn.startPos, spawn.dir);
-        }, CONFIG.respawnTimer)
+        }, CONFIG.respawnTimer);
     }
-
 
     moveSnakes() {
         for (const snake of this.snakes) {
@@ -125,7 +128,7 @@ export class Game {
             snake.move();
             if (snake.checkBorderDeath(this.gridCols, this.gridRows)) {
                 this.respawnSnake(snake);
-            };
+            }
         }
     }
 
@@ -143,7 +146,7 @@ export class Game {
                 if (snake.checkCollisionWithOther(this.snakes[j])) {
                     this.respawnSnake(snake);
                     break;
-                };
+                }
             }
         }
 
@@ -158,7 +161,7 @@ export class Game {
         for (const [, snakesAtPos] of heads) {
             if (snakesAtPos.length > 1) {
                 for (const snake of snakesAtPos) {
-                    snake.respawnedSnake(snake);
+                    this.respawnSnake(snake);
                 }
             }
         }
@@ -179,14 +182,22 @@ export class Game {
     }
 
     maintainPickups() {
-        //make sure there is always three pickups on the grid
         while (this.pickups.length < 3) {
             this.spawnPickup("food");
         }
     }
 
+    // Handling inputs
+    isValidInput(key, playerId = null) {
+        for (const snake of this.snakes) {
+            if (playerId && snake.id !== playerId) continue;
+            if (snake.alive && snake.keyMap[key]) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    // handling inputs
     handleKeyPress(key, playerId = null) {
         for (const snake of this.snakes) {
             if (playerId && snake.id !== playerId) continue;
@@ -199,24 +210,37 @@ export class Game {
         return false;
     }
 
-    // handling state for the game
+    getWinner() {
+        if (this.snakes.length === 0) return null;
+
+        let winner = this.snakes[0];
+        for (const snake of this.snakes) {
+            if (snake.longestLength > winner.longestLength) {
+                winner = snake;
+            }
+        }
+        return winner;
+    }
+
     getState() {
         return {
             snakes: this.snakes,
             pickups: this.pickups,
             timeRemaining: Math.round(this.timeRemainingMS / 1000),
-            isGameOver: (this.timeRemainingMS <= 0)
+            timeRemainingMS: this.timeRemainingMS,
+            isGameOver: this.timeRemainingMS <= 0
         };
     }
 
-    toJSON() {
+    getFullState() {
         return {
             snakes: this.snakes.map(s => s.toJSON()),
             pickups: this.pickups.map(p => p.toJSON()),
+            timeRemainingMS: this.timeRemainingMS
         };
     }
 
-    //get state from server and apply locally for clients that are not the host
+    // Get state from server and apply locally for clients that are not the host
     applyState(data) {
         for (const snakeData of data.snakes) {
             const existing = this.snakes.find(s => s.id === snakeData.id);
@@ -231,5 +255,9 @@ export class Game {
         this.snakes = this.snakes.filter(s => serverIds.has(s.id));
 
         this.pickups = data.pickups.map(p => Pickup.fromJSON(p));
+
+        if (typeof data.timeRemainingMS === 'number') {
+            this.timeRemainingMS = data.timeRemainingMS;
+        }
     }
 }

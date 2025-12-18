@@ -2,6 +2,7 @@ export class InputHandler {
     constructor(game, playerId = null) {
         this.game = game;
         this.playerId = playerId;
+        this.onInput = null;
         this.boundKeyDown = this.handleKeyDown.bind(this);
     }
 
@@ -17,8 +18,14 @@ export class InputHandler {
         const key = event.key;
 
         //movement
-        if (this.game.handleKeyPress(key, this.playerId)) {
+        if (this.game.isValidInput(key, this.playerId)) {
             event.preventDefault();
+
+            if (this.onInput) {
+                this.onInput(key, this.playerId);
+            } else {
+                this.game.handleKeyPress(key, this.playerId);
+            }
         }
     }
 }

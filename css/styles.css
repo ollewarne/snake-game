@@ -1,0 +1,351 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding-top: 32px;
+}
+
+/* =====================
+   SELECTION UI
+   ===================== */
+.selection-container {
+    width: 320px;
+    padding: 2rem;
+    margin: 0 auto;
+    background: #0d0d14;
+    border: 1px solid #1a1a2e;
+    border-top: 4px solid #2a9d6a;
+}
+
+.selection-container h1 {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #2a9d6a;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.selection-container label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #888;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.selection-container input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 1rem;
+    background: #08080c;
+    border: 1px solid #2a2a3e;
+    border-left: 3px solid #2a9d6a;
+    color: #e0e0e0;
+    font-size: 0.875rem;
+}
+
+.selection-container input:focus {
+    outline: none;
+    border-color: #2a9d6a;
+    border-left-color: #ccc;
+}
+
+.selection-container input::placeholder {
+    color: #444;
+}
+
+.selection-container button {
+    width: 100%;
+    padding: 12px 24px;
+    margin-bottom: 0.5rem;
+    border: none;
+    background: #2a9d6a;
+    color: #0a0a0f;
+    font-size: 0.875rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.selection-container button:hover {
+    background: #3ab87f;
+}
+
+.selection-container button:last-child {
+    margin-bottom: 0;
+}
+
+.selection-container .btn-secondary {
+    background: none;
+    border: 2px solid #b85a7a;
+    color: #b85a7a;
+}
+
+.selection-container .btn-secondary:hover {
+    background: #b85a7a;
+    color: #0a0a0f;
+}
+
+.selection-divider {
+    border: none;
+    border-top: 1px solid #1a1a2e;
+    margin: 1.25rem 0;
+}
+
+/* =====================
+   LOBBY
+   ===================== */
+.lobby-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 16px;
+    max-width: 900px;
+    margin: 0 auto;
+    border-bottom: 2px solid #2a9d6a;
+}
+
+.lobby-info {
+    color: #888;
+}
+
+.lobby-info div:first-child {
+    color: #2a9d6a;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+.lobby-meta {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    color: #555;
+    font-size: 0.85em;
+    padding-top: 8px;
+}
+
+.lobby-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.lobby-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 16px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.lobby-top {
+    display: flex;
+    gap: 16px;
+}
+
+.lobby-section {
+    background: #0d0d14;
+    padding: 16px;
+    flex: 1;
+    border: 1px solid #1a1a2e;
+    border-left: 4px solid #b85a7a;
+}
+
+.lobby-section h3 {
+    margin: 0 0 12px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a1a2e;
+    color: #b85a7a;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 2px;
+}
+
+.lobby-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    min-height: 150px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.lobby-list li {
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    background: #12121a;
+    border-left: 3px solid #2a9d6a;
+    transition: background 0.15s;
+}
+
+.lobby-list li:hover {
+    background: #1a1a24;
+    border-left-color: #ccc;
+}
+
+.chat-section {
+    flex: none;
+    width: 100%;
+    border-left-color: #2a9d6a;
+}
+
+.chat-messages {
+    min-height: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #08080c;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #1a1a2e;
+}
+
+.chat-messages div {
+    margin-bottom: 6px;
+    padding: 6px 0;
+    border-bottom: 1px solid #111;
+}
+
+.chat-messages div:last-child {
+    border-bottom: none;
+}
+
+.chat-messages strong {
+    color: #2a9d6a;
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px 14px;
+    border: 1px solid #2a2a3e;
+    border-left: 3px solid #2a9d6a;
+    background: #08080c;
+    color: #e0e0e0;
+    transition: border-color 0.2s;
+}
+
+.chat-input:focus {
+    outline: none;
+    border-color: #2a9d6a;
+    border-left-color: #ccc;
+}
+
+.chat-input::placeholder {
+    color: #444;
+}
+
+.lobby-btn {
+    padding: 12px 24px;
+    border: none;
+    background: #2a9d6a;
+    color: #0a0a0f;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.lobby-btn:hover {
+    background: #3ab87f;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: none;
+    border: 2px solid #b85a7a;
+    color: #b85a7a;
+}
+
+.btn-secondary:hover {
+    background: #b85a7a;
+    color: #0a0a0f;
+}
+
+/* =====================
+       GAME SCREEN
+===================== */
+.game-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    gap: 16px;
+}
+
+.game-status {
+    background: #0d0d14;
+    border: 1px solid #1a1a2e;
+    border-left: 4px solid #2a9d6a;
+    padding: 12px 24px;
+    color: #e0e0e0;
+    font-size: 0.9em;
+    min-width: 400px;
+    text-align: center;
+}
+
+.game-status .player-score {
+    display: inline-block;
+    margin: 0 12px;
+    padding: 4px 8px;
+    background: #12121a;
+    border-left: 3px solid var(--player-color, #2a9d6a);
+}
+
+.game-canvas {
+    border: 2px solid #1a1a2e;
+    background: #000;
+}
+
+.game-over-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #0d0d14;
+    border: 2px solid #b85a7a;
+    padding: 32px 48px;
+    text-align: center;
+    z-index: 100;
+}
+
+.game-over-overlay h2 {
+    color: #b85a7a;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: #08080c;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2a9d6a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}

@@ -76,10 +76,6 @@ export class Snake {
         if (this.body.length >= this.longestLength) this.longestLength += n;
     }
 
-    get score() {
-        return this.longestLength;
-    }
-
     checkBorderDeath(maxCols, maxRows) {
         const h = this.head;
         if (h.x < 0 || h.x >= maxCols || h.y < 0 || h.y >= maxRows) {
@@ -131,7 +127,7 @@ export class Snake {
             color: this.color,
             alternateColor: this.alternateColor,
             alive: this.alive,
-            score: this.score,
+            score: this.longestLength,
             body: this.body.map(v => v.toJSON()),
             dir: this.dir.toJSON(),
         };
@@ -146,7 +142,7 @@ export class Snake {
             dir: Vector.fromJSON(data.dir)
         });
         snake.alive = data.alive;
-        snake.score = data.score;
+        snake.longestLength = data.score;
         snake.body = data.body.map(v => Vector.fromJSON(v));
         return snake;
     }
@@ -154,7 +150,7 @@ export class Snake {
     // Update from host player?
     updateFromJSON(data) {
         this.alive = data.alive;
-        this.score = data.score;
+        this.longestLength = data.score;
         this.body = data.body.map(v => Vector.fromJSON(v));
         this.dir = Vector.fromJSON(data.dir);
     }

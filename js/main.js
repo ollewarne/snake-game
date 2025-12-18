@@ -206,17 +206,19 @@ function startMultiplayerGame() {
 
     game.init();
 
+    let spawnIdx = 0;
     for (const clientId in players) {
         const p = players[clientId];
         if (!p.isSpectator) {
-            const spawnIdx = parseInt(p.playerId.replace('P', ''));
             const spawn = CONFIG.spawnPoints[spawnIdx % CONFIG.spawnPoints.length];
 
             game.addSnake({
                 id: p.playerId,
                 startPos: spawn.startPos,
                 dir: spawn.dir
-            })
+            });
+
+            spawnIdx++;
         }
     }
 

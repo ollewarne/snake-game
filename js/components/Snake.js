@@ -2,23 +2,12 @@ import { CONFIG } from "../config.js";
 import { defaultKeyMap } from "../utils/keymap.js";
 import { Vector } from "../utils/Vector.js";
 
-function generateSnakeColors() {
-    const hue = Math.floor(Math.random() * 360);
-    const saturation = 70;
-
-    return {
-        color: `hsl(${hue}, ${saturation}%, 45%)`,
-        alternateColor: `hsl(${hue}, ${saturation}%, 35%)`
-    }
-}
-
 export class Snake {
     constructor(opts = {}) {
         this.id = opts.id ?? Math.random().toString(36).slice(2, 8);
 
-        const colors = opts.color ? null : generateSnakeColors();
-        this.color = opts.color ?? colors.color;
-        this.alternateColor = opts.alternateColor ?? colors.alternateColor;
+        this.color = opts.color;
+        this.alternateColor = opts.alternateColor
         this.alive = true;
 
         const start = opts.startPos ?? { x: 20, y: 15 };

@@ -19,6 +19,13 @@ export const CONFIG = {
     gridColor: "#071218",
     foodColor: "#941909",
 
+    playerColors: [
+        { hue: 0 },
+        { hue: 45 },
+        { hue: 120 },
+        { hue: 220 }
+    ],
+
     //spawns
     respawnTimer: 500,
     spawnPoints: [

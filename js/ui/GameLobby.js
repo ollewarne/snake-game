@@ -172,10 +172,13 @@ export class GameLobby {
     setPlayers(players) {
         this.elements.players.textContent = '';
         this.playerCount = players.length;
-        players.forEach(name => {
+        players.forEach(player => {
             const li = document.createElement('li');
-            li.textContent = name;
-            li.dataset.name = name;
+            li.textContent = player.name;
+            li.dataset.name = player.name;
+            if (player.color) {
+                li.style.borderLeftColor = player.color;
+            }
             this.elements.players.appendChild(li);
         });
         this.updateStartButton();

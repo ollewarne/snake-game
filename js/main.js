@@ -27,6 +27,8 @@ let isSpectator = false;
 let players = {};
 let spawnIndex = 0;
 
+const playerColors = CONFIG.playerColors;
+
 function init() {
     api = new mpapi(SERVER_URL, APP_ID);
     setupApiListener();
@@ -40,6 +42,16 @@ function setupBeforeUnload() {
             api.leave();
         }
     });
+}
+
+let nextColorIndex = 0;
+function generatePlayerColor() {
+    const hue = playerColors[nextColorIndex % playerColors.length].hue;
+    nextColorIndex++;
+    return {
+        color: `hsl(${hue}, 70%, 50%)`,
+        alternateColor: `hsl(${hue}, 70%, 35%)`
+    };
 }
 
 function showSelectionUi() {
@@ -62,10 +74,14 @@ function showSelectionUi() {
             isHost = true;
             isSpectator = false;
 
+            const colors = generatePlayerColor();
+
             players[myClientId] = {
                 name: myName,
                 playerId: `P${spawnIndex}`,
-                isSpectator: false
+                isSpectator: false,
+                color: colors.color,
+                alternateColor: colors.alternateColor
             };
             spawnIndex++;
 
@@ -133,7 +149,7 @@ function updateLobbyDisplay() {
         if (p.isSpectator) {
             spectatorNames.push(p.name);
         } else {
-            playerNames.push(p.name);
+            playerNames.push({ name: p.name, color: p.color });
         }
     }
 
@@ -214,7 +230,9 @@ function startMultiplayerGame() {
             game.addSnake({
                 id: p.playerId,
                 startPos: spawn.startPos,
-                dir: spawn.dir
+                dir: spawn.dir,
+                color: p.color,
+                alternateColor: p.alternateColor
             });
 
             spawnIdx++;
@@ -409,10 +427,14 @@ function handlePlayerJoined(clientId, data) {
         const currentPlayerCount = Object.values(players).filter(p => !p.isSpectator).length;
         const isNewSpectator = currentPlayerCount >= MAX_PLAYERS;
 
+        const colors = isNewSpectator ? null : generatePlayerColor();
+
         players[clientId] = {
             name: data.name,
             playerId: isNewSpectator ? null : `P${spawnIndex}`,
-            isSpectator: isNewSpectator
+            isSpectator: isNewSpectator,
+            color: colors?.color || null,
+            alternateColor: colors?.alternateColor || null
         };
 
         if (!isNewSpectator) {
@@ -480,6 +502,7 @@ function cleanup() {
     spawnIndex = 0;
     isHost = false;
     isSpectator = false;
+    nextColorIndex = 0;
 }
 
 init();

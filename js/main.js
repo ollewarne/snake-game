@@ -329,7 +329,9 @@ function updateGameUI(state) {
 
     renderer.render(state);
 
-    let statusText = `Time: ${state.timeRemaining}s`;
+    let tx = api.stats.tx;
+    let rx = api.stats.rx;
+    let statusText = `TX: ${tx} | RX: ${rx} | Time: ${state.timeRemaining}s`;
     for (const snake of state.snakes) {
         const playerInfo = findPlayerByPlayerId(snake.id);
         const name = playerInfo ? playerInfo.name : snake.id;

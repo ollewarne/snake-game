@@ -11,6 +11,11 @@ export class GameScreen {
         this.container = document.createElement("div");
         this.container.className = 'game-screen';
 
+        this.elements.controls = document.createElement("div");
+        this.elements.controls.className = 'game-status';
+        this.elements.controls.textContent = 'Use WASD or arrow keys to control the snake';
+        this.container.appendChild(this.elements.controls);
+
         this.elements.status = document.createElement("div");
         this.elements.status.className = 'game-status';
         this.container.appendChild(this.elements.status);

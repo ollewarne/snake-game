@@ -105,8 +105,8 @@ export class Game {
             return;
         }
 
-        this.moveSnakes();
         this.checkSnakeCollisions();
+        this.moveSnakes();
         this.checkPickups();
         this.maintainPickups();
 

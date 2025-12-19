@@ -6,6 +6,8 @@ import { Game } from './components/Game.js';
 import { Renderer } from './rendering/Renderer.js';
 import { InputHandler } from './utils/InputHandler.js';
 import { CONFIG } from './config.js';
+import { defaultKeyMap } from './utils/keymap.js';
+import { Vector } from './utils/Vector.js';
 
 const SERVER_URL = 'wss://mpapi.se/net';
 const APP_ID = 'ultra-snake-game';
@@ -248,15 +250,17 @@ function startMultiplayerGame() {
         isSpectator = false;
         input = new InputHandler(game, myPlayerInfo.playerId);
 
-        if (isHost) {
-            input.onInput = (key, playerId) => {
-                game.handleKeyPress(key, playerId);
-            }
-        } else {
-            input.onInput = (key, playerId) => {
+        input.onInput = (key, playerId) => {
+            const snake = game.getSnake(playerId);
+            if (!snake) return;
+
+            const newDir = Vector.fromName(defaultKeyMap()[key]);
+            if (!newDir) return;
+
+            if (!snake.dir.equals(newDir)) {
                 api.transmit({ type: 'input', key: key, playerId: playerId });
             }
-        }
+        };
         input.start();
     } else {
         isSpectator = true;
@@ -296,7 +300,15 @@ function joinMultiplayerGame() {
         isSpectator = false;
         input = new InputHandler(game, myPlayerInfo.playerId);
         input.onInput = (key, playerId) => {
-            api.transmit({ type: 'input', key: key, playerId: playerId });
+            const snake = game.getSnake(playerId);
+            if (!snake) return;
+
+            const newDir = Vector.fromName(defaultKeyMap()[key])
+            if (!newDir) return;
+
+            if (!snake.dir.equals(newDir)) {
+                api.transmit({ type: 'input', key: key, playerId: playerId });
+            }
         };
 
         input.start();

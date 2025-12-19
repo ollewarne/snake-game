@@ -115,7 +115,6 @@ function showLobby(session, hostName) {
 
     lobby.onSendMessage = (text) => {
         api.transmit({ type: 'chat', name: myName, message: text });
-        lobby.addChatMessage(myName, text);
     }
 
     if (isHost) {

@@ -27,6 +27,9 @@ export class Snake {
 
         this.pendingGrow = 0;
         this.keyMap = opts.keyMap ?? defaultKeyMap();
+
+        this.respawning = false;
+        this.respawnTime = 0;
     }
 
     setDirection(newDir) {
@@ -120,12 +123,22 @@ export class Snake {
             dir: this.dir.toJSON(),
             length: this.body.length,
             alive: this.alive,
+            respawning: this.respawning,
             score: this.longestLength,
             pendingGrow: this.pendingGrow
         }
     }
 
     updateFromNetworkState(data) {
+
+        this.respawning = data.respawning || false;
+
+        if (data.respawning || data.head === null) {
+            this.body = [];
+            this.alive = data.alive;
+            this.longestLength = data.score;
+            return;
+        }
 
         const newHead = Vector.fromJSON(data.head);
         const newDir = Vector.fromJSON(data.dir);

@@ -47,7 +47,7 @@ export class Renderer {
     }
 
     drawSnake(snake) {
-        if (!snake.alive && snake.body.length === 0) return;
+        if (!snake.alive || snake.respawning || snake.body.length === 0) return;
 
         const head = snake.head;
 

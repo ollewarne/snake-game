@@ -116,8 +116,11 @@ export class Game {
     respawnSnake(snake) {
         const spawn = CONFIG.spawnPoints[Math.floor(Math.random() * CONFIG.spawnPoints.length)];
         let length = snake.body.length;
+        snake.alive = false;
+        snake.respawning = true;
         snake.body = [];
         setTimeout(() => {
+            snake.respawning = false;
             snake.respawn(length, spawn.startPos, spawn.dir);
         }, CONFIG.respawnTimer);
     }

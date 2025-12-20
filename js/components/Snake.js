@@ -25,6 +25,9 @@ export class Snake {
             ));
         }
 
+        this.predictedBody = null;
+        this.isPredicting = false;
+
         this.pendingGrow = 0;
         this.keyMap = opts.keyMap ?? defaultKeyMap();
     }
@@ -58,6 +61,32 @@ export class Snake {
 
         this.lastMoveDir = this.dir.clone();
         return newHead;
+    }
+
+    startPrediction() {
+        this.predictedBody = this.body.map(seg => seg.clone());
+        this.isPredicting = true;
+    }
+
+    predictMove() {
+        if (!this.alive || !this.predictedBody || this.predictedBody.length === 0) return;
+        const predictedHead = this.predictedBody[0].add(this.dir);
+        this.predictedBody.unshift(predictedHead);
+
+        while (this.predictedBody.length > this.body.length) {
+            this.predictedBody.pop();
+        }
+    }
+
+    syncPrediction() {
+        this.predictedBody = this.body.map(seg => seg.clone());
+    }
+
+    getRenderBody() {
+        if (this.isPredicting && this.predictedBody) {
+            return this.predictedBody;
+        }
+        return this.body;
     }
 
     grow(n = 1) {

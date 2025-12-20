@@ -311,6 +311,8 @@ function joinMultiplayerGame() {
             if (!newDir) return;
 
             if (!snake.dir.equals(newDir)) {
+                game.handleKeyPress(key, playerId);
+
                 api.transmit({ type: 'input', key: key, playerId: playerId });
             }
         };

@@ -213,7 +213,7 @@ function startMultiplayerGame() {
         onStateChange: (state) => {
             updateGameUI(state);
             if (isHost) {
-                api.transmit({ type: 'gameState', state: game.getFullState() });
+                api.transmit({ type: 'gameState', state: game.getNetworkState() });
             }
         },
         onGameOver: handleMultiplayerGameOver
@@ -426,7 +426,7 @@ function handleGameMessage(clientId, data) {
             break;
         case 'gameState':
             if (!isHost && game) {
-                game.applyState(data.state);
+                game.applyNetworkState(data.state);
                 updateGameUI(game.getState());
             }
             break;

@@ -110,6 +110,48 @@ export class Snake {
     }
 
     // for multiplayer
+
+    toNetworkState() {
+        return {
+            id: this.id,
+            head: this.head.toJSON(),
+            dir: this.dir.toJSON(),
+            length: this.body.length,
+            alive: this.alive,
+            score: this.longestLength,
+            pendingGrow: this.pendingGrow
+        }
+    }
+
+    updateFromNetworkState(data) {
+
+        const newHead = Vector.fromJSON(data.head);
+        const newDir = Vector.fromJSON(data.dir);
+
+        const headMoved = !this.head.equals(newHead);
+        const dirChanged = !this.dir.equals(newDir);
+
+        if (!this.alive && data.alive) {
+            this.body = [newHead.clone()];
+            this.pendingGrow = data.length - 1;
+        } else if (headMoved && data.alive) {
+            this.body.unshift(newHead.clone());
+
+            while (this.body.length > data.length) {
+                this.body.pop();
+            }
+
+            while (this.body.length < data.length) {
+                this.body.push(this.body[this.body.length - 1].clone());
+            }
+        }
+
+        this.dir = newDir;
+        this.alive = data.alive;
+        this.longestLength = data.score;
+        this.pendingGrow = data.pendingGrow || 0;
+    }
+
     toJSON() {
         return {
             id: this.id,

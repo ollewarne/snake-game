@@ -256,6 +256,8 @@ export class Game {
             } else {
                 const newSnake = new Snake({
                     id: snakeData.id,
+                    color: snakeData.color,
+                    altenateColor: snakeData.altenateColor,
                     startPos: Vector.fromJSON(snakeData.head),
                     dir: Vector.fromJSON(snakeData.dir),
                     initialLength: 1

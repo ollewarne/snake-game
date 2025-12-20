@@ -114,6 +114,8 @@ export class Snake {
     toNetworkState() {
         return {
             id: this.id,
+            color: this.color,
+            alternateColor: this.alternateColor,
             head: this.head.toJSON(),
             dir: this.dir.toJSON(),
             length: this.body.length,

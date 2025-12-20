@@ -252,8 +252,14 @@ export class Game {
         for (const snakeData of data.snakes) {
             const existing = this.snakes.find(s => s.id === snakeData.id);
             if (existing) {
+                if (snakeData.head === null) {
+                    existing.alive = snakeData.alive;
+                    existing.longestLength = snakeData.score;
+                    continue;
+                }
                 existing.updateFromNetworkState(snakeData);
             } else {
+                if (snakeData.head === null) continue;
                 const newSnake = new Snake({
                     id: snakeData.id,
                     color: snakeData.color,

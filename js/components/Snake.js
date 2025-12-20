@@ -116,7 +116,7 @@ export class Snake {
             id: this.id,
             color: this.color,
             alternateColor: this.alternateColor,
-            head: this.head.toJSON(),
+            head: this.body.length > 0 ? this.head.toJSON() : null,
             dir: this.dir.toJSON(),
             length: this.body.length,
             alive: this.alive,

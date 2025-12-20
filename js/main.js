@@ -23,11 +23,15 @@ let input = null;
 
 let myName = '';
 let myClientId = '';
+let hostClientId = null;
 let isHost = false;
 let isSpectator = false;
 
 let players = {};
 let spawnIndex = 0;
+
+let readyClients = new Set();
+let expectedPlayerCount = 0;
 
 const playerColors = CONFIG.playerColors;
 
@@ -74,6 +78,7 @@ function showSelectionUi() {
 
             myClientId = response.clientId;
             isHost = true;
+            hostClientId = myClientId;
             isSpectator = false;
 
             const colors = generatePlayerColor();
@@ -162,7 +167,12 @@ function updateLobbyDisplay() {
 
 function broadcastPlayerList() {
     if (isHost) {
-        api.transmit({ type: 'playerList', players: players });
+        api.transmit({
+            type: 'playerList',
+            players: players,
+            spawnIndex: spawnIndex,
+            hostClientId: myClientId
+        });
     }
 }
 
@@ -271,7 +281,12 @@ function startMultiplayerGame() {
     }
 
     if (isHost) {
-        game.start();
+        expectedPlayerCount = Object.values(players).filter(p => !p.isSpectator).length;
+        readyClients.add(myClientId);
+
+        api.transmit({ type: 'initialState', state: game.getNetworkState() })
+
+        checkAllReady();
     }
 
     updateGameUI(game.getState());
@@ -313,7 +328,7 @@ function joinMultiplayerGame() {
             if (!snake.dir.equals(newDir)) {
                 game.handleKeyPress(key, playerId);
 
-                api.transmit({ type: 'input', key: key, playerId: playerId });
+                api.transmit({ type: 'input', key: key, playerId: playerId }, hostClientId);
             }
         };
 
@@ -322,10 +337,20 @@ function joinMultiplayerGame() {
         isSpectator = true;
     }
 
+    api.transmit({ type: 'ready', clientId: myClientId }, hostClientId)
+
     gameScreen.onRestart(() => {
         cleanup();
         location.reload();
     });
+}
+
+function checkAllReady() {
+    if (isHost && readyClients.size >= expectedPlayerCount) {
+        console.log('everyone ready, start your engines!!!');
+        api.transmit({ type: 'gameStart' })
+        game.start();
+    }
 }
 
 function updateGameUI(state) {
@@ -410,6 +435,7 @@ function handleGameMessage(clientId, data) {
         case 'playerList':
             players = data.players;
             spawnIndex = data.spawnIndex;
+            hostClientId = data.hostClientId;
 
             if (players[myClientId]) {
                 isSpectator = players[myClientId].isSpectator;
@@ -420,6 +446,20 @@ function handleGameMessage(clientId, data) {
             if (!isHost) {
                 joinMultiplayerGame();
             }
+            break;
+        case 'initialState':
+            if (!isHost && game) {
+                game.applyNetworkState(data.state);
+                updateGameUI(game.getState);
+            }
+            break;
+        case 'ready':
+            if (isHost) {
+                readyClients.add(data.clientId);
+                checkAllReady();
+            }
+            break;
+        case 'gameStart':
             break;
         case 'input':
             if (isHost && game) {
@@ -523,6 +563,9 @@ function cleanup() {
     isHost = false;
     isSpectator = false;
     nextColorIndex = 0;
+    readyClients = new Set();
+    expectedPlayerCount = 0;
+    hostClientId = null;
 }
 
 init();

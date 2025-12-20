@@ -132,6 +132,8 @@ export class Snake {
     updateFromNetworkState(data) {
 
         this.respawning = data.respawning || false;
+        this.color = data.color || this.color;
+        this.alternateColor = data.alternateColor || this.alternateColor;
 
         if (data.respawning || data.head === null) {
             this.body = [];

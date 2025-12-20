@@ -266,14 +266,14 @@ export class Game {
                 const newSnake = new Snake({
                     id: snakeData.id,
                     color: snakeData.color,
-                    altenrateColor: snakeData.altenrateColor,
+                    alternateColor: snakeData.alternateColor,
                     startPos: Vector.fromJSON(snakeData.head),
                     dir: Vector.fromJSON(snakeData.dir),
                     initialLength: 1
                 });
                 newSnake.alive = snakeData.alive;
                 newSnake.longestLength = snakeData.score;
-                newSnake.pendingGrow = snakeData.length - 1;
+                newSnake.pendingGrow = snakeData.pendingGrow || 0;
                 this.snakes.push(newSnake);
             }
         }

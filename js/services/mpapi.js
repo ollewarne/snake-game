@@ -126,7 +126,7 @@ export class mpapi {
     }
 
     _enqueueOrSend(serializedMessage) {
-        this.stats.tx.tick(1, serializedMessage.byteLength ? serializedMessage.length : 0);
+        this.stats.tx.tick(1, serializedMessage.length || 0);
 
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(serializedMessage);

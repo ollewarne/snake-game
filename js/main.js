@@ -209,18 +209,11 @@ function startMultiplayerGame() {
 
     gameScreen = new GameScreen();
 
-    let networkTickCounter = 0;
-    const TICK_INTERVAL = 2;
-
     game = new Game({
         onStateChange: (state) => {
             updateGameUI(state);
             if (isHost) {
-                networkTickCounter++;
-                if (networkTickCounter >= TICK_INTERVAL) {
-                    api.transmit({ type: 'gameState', state: game.getFullState() });
-                    networkTickCounter = 0;
-                }
+                api.transmit({ type: 'gameState', state: game.getFullState() });
             }
         },
         onGameOver: handleMultiplayerGameOver
@@ -305,15 +298,6 @@ function joinMultiplayerGame() {
     renderer = new Renderer(gameScreen.getCanvas());
 
     game.init();
-
-    let predictionTimer = setInterval(() => {
-        if (game && !isHost) {
-            game.predictTick();
-            updateGameUI(game.getState());
-        }
-    }, CONFIG.tickMS)
-
-    gameScreen.predictionTimer = predictionTimer;
 
     const myPlayerInfo = players[myClientId];
     if (myPlayerInfo && !myPlayerInfo.isSpectator) {
@@ -443,13 +427,6 @@ function handleGameMessage(clientId, data) {
         case 'gameState':
             if (!isHost && game) {
                 game.applyState(data.state);
-
-                if (!game.snakes.some(s => s.isPredicting)){
-                    game.startPrediction();
-                } else {
-                    game.syncAllPredictions();
-                }
-
                 updateGameUI(game.getState());
             }
             break;
@@ -510,10 +487,6 @@ function handlePlayerLeft(clientId) {
 }
 
 function cleanup() {
-    if (gameScreen && gameScreen.predictionTimer) {
-        clearInterval(gameScreen.predictionTimer);
-    }
-
     if (input) {
         input.stop();
         input = null;

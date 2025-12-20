@@ -49,9 +49,7 @@ export class Renderer {
     drawSnake(snake) {
         if (!snake.alive && snake.body.length === 0) return;
 
-
-        const body = snake.getRenderBody ? snake.getRenderBody() : snake.body;
-        const head = body[0];
+        const head = snake.head;
 
         this.drawCell(head, snake.color, 0);
 

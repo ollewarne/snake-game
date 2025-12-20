@@ -47,28 +47,6 @@ export class Game {
         return this.snakes.find(s => s.id === id);
     }
 
-    predictTick() {
-        for (const snake of this.snakes) {
-            if (snake.alive && snake.isPredicting) {
-                snake.predictMove();
-            }
-        }
-    }
-
-    startPrediction() {
-        for (const snake of this.snakes) {
-            snake.startPrediction();
-        }
-    }
-
-    syncAllPredictions() {
-        for (const snake of this.snakes) {
-            if (snake.isPredicting) {
-                snake.syncPrediction();
-            }
-        }
-    }
-
     start() {
         if (this.isRunning) return;
         this.isRunning = true;

@@ -560,7 +560,7 @@ function promoteSpectatorToPlayer(spectatorId) {
     if (!spectator || !spectator.isSpectator) return false;
     const colors = generatePlayerColor();
 
-    specator.isSpectator = false;
+    spectator.isSpectator = false;
     spectator.playerId = `P${spawnIndex}`;
     spectator.color = colors.color;
     spectator.alternateColor = colors.alternateColor;

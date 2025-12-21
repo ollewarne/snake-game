@@ -107,6 +107,7 @@ function showSelectionUi() {
                 name: myName,
                 playerId: `P${spawnIndex}`,
                 isSpectator: false,
+                colorIndex: colors.colorIndex,
                 color: colors.color,
                 alternateColor: colors.alternateColor
             };
@@ -524,6 +525,7 @@ function handlePlayerJoined(clientId, data) {
             name: data.name,
             playerId: isNewSpectator ? null : `P${spawnIndex}`,
             isSpectator: isNewSpectator,
+            colorIndex: colors.colorIndex,
             color: colors?.color || null,
             alternateColor: colors?.alternateColor || null
         };
@@ -581,6 +583,7 @@ function promoteSpectatorToPlayer(spectatorId) {
 
     spectator.isSpectator = false;
     spectator.playerId = `P${spawnIndex}`;
+    spectator.colorIndex = colors.colorIndex;
     spectator.color = colors.color;
     spectator.alternateColor = colors.alternateColor;
 

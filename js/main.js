@@ -393,6 +393,7 @@ function updateGameUI(state) {
     const leaderBoardData = state.snakes.map(snake => {
         const playerInfo = findPlayerByPlayerId(snake.id);
         return {
+            id: snake.id,
             name: playerInfo ? playerInfo.name : snake.id,
             score: snake.longestLength,
             color: snake.color || playerInfo?.color || '#888',

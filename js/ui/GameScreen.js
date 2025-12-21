@@ -11,9 +11,8 @@ export class GameScreen {
         this.container = document.createElement("div");
         this.container.className = 'game-screen';
 
-        this.elements.gameInfo = document.createElement("div");
-        this.elements.gameInfo.className = 'game-info';
-        this.container.appendChild(this.elements.gameInfo);
+        this.elements.wrapper = document.createElement("div");
+        this.elements.wrapper.className = 'game-wrapper';
 
         this.elements.leaderboard = document.createElement("div");
         this.elements.leaderboard.className = 'leaderboard';
@@ -27,18 +26,29 @@ export class GameScreen {
         this.elements.leaderboardList.className = 'leaderboard-list';
         this.elements.leaderboard.appendChild(this.elements.leaderboardList);
 
-        this.container.appendChild(this.elements.leaderboard);
+        this.elements.wrapper.appendChild(this.elements.leaderboard);
 
         this.elements.canvas = document.createElement("canvas");
         this.elements.canvas.className = 'game-canvas';
         this.elements.canvas.width = CONFIG.cellSize * CONFIG.gridCols;
         this.elements.canvas.height = CONFIG.cellSize * CONFIG.gridRows;
-        this.container.appendChild(this.elements.canvas);
+        this.elements.wrapper.appendChild(this.elements.canvas);
+
+        this.elements.bottomBar = document.createElement("div");
+        this.elements.bottomBar.className = 'game-bottom-bar';
+
+        this.elements.gameInfo = document.createElement("div");
+        this.elements.gameInfo.className = 'game-info';
+        this.elements.bottomBar.appendChild(this.elements.gameInfo);
 
         this.elements.controls = document.createElement("div");
         this.elements.controls.className = 'game-controls';
         this.elements.controls.textContent = 'Use WASD or Arrow Keys to move';
-        this.container.appendChild(this.elements.controls);
+        this.elements.bottomBar.appendChild(this.elements.controls);
+
+        this.elements.wrapper.appendChild(this.elements.bottomBar);
+
+        this.container.appendChild(this.elements.wrapper);
 
         this.elements.restartBtn = document.createElement("button");
         this.elements.restartBtn.className = 'lobby-btn';

@@ -56,7 +56,7 @@ export class GameLobby {
         this.elements.countdown.className = 'lobby-countdown';
         this.elements.countdown.style.display = 'none';
         this.elements.countdown.textContent = "";
-        this.actions.appendChild(this.elements.countdown);
+        actions.appendChild(this.elements.countdown);
 
         header.appendChild(actions);
         document.body.appendChild(header);

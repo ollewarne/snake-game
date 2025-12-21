@@ -1,6 +1,7 @@
 # Ultra Snake Game
 
-A multiplayer snake game built with vanilla JavaScript featuring real-time WebSocket networking, canvas rendering, and lobby-based matchmaking.
+A multiplayer snake game built with vanilla JavaScript featuring real-time WebSocket networking, canvas rendering, and lobby-based matchmaking.  
+You can test the game [HERE](https://ollewarne.github.io/snake-game/)
 
 ## Features
 

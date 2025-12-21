@@ -64,9 +64,6 @@ export class mpapi {
                 return;
             }
 
-            //console.log('Received payload:', payload);
-
-
             const cmd = payload.cmd;
             const messageId = typeof payload.messageId === 'number' ? payload.messageId : null;
             const clientId = typeof payload.clientId === 'string' ? payload.clientId : null;
@@ -102,7 +99,6 @@ export class mpapi {
                     this.onList(data);
 
             } else if (cmd === 'joined' || cmd === 'left' || cmd === 'closed' || cmd === 'game') {
-                //console.log(`Received ${cmd} command`);
 
                 this.listeners.forEach((listener) => {
                     try {
@@ -265,7 +261,6 @@ export class mpapi {
                 this.avgPacketsPerSec = this._packetSum / seconds;
                 this.avgBytesPerSec = this._byteSum / seconds;
 
-                //console.log(this.type + ` ${this.avgPacketsPerSec.toFixed(2)}pkts/sec ${this.avgBytesPerSec.toFixed(2)}bytes/sec`);
             }, TICK_MS);
         }
 

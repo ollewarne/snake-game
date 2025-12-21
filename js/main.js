@@ -366,7 +366,6 @@ function joinMultiplayerGame() {
 
 function checkAllReady() {
     if (isHost && readyClients.size >= expectedPlayerCount) {
-        console.log('everyone ready, start your engines!!!');
         api.transmit({ type: 'gameStart' })
         game.start();
     }
@@ -467,7 +466,6 @@ function findPlayerByPlayerId(playerId) {
 
 function setupApiListener() {
     api.listen((cmd, messageId, clientId, data) => {
-        console.log('API event:', cmd, clientId);
         switch (cmd) {
             case 'game':
                 handleGameMessage(clientId, data);
@@ -585,7 +583,6 @@ function handlePlayerJoined(clientId, data) {
 }
 
 function handlePlayerLeft(clientId) {
-    console.log('handlePlayerLeft called:', clientId, players[clientId]);
 
     if (players[clientId]) {
         const leftPlayer = players[clientId];
@@ -598,14 +595,12 @@ function handlePlayerLeft(clientId) {
         }
 
         if (game && leftPlayer.playerId) {
-            console.log('Removing snake:', leftPlayer.playerId);
             game.removeSnake(leftPlayer.playerId);
         }
 
         if (wasPlayer && lobby && spectatorQueue.length > 0) {
             const nextSpectator = spectatorQueue[0];
             if (promoteSpectatorToPlayer(nextSpectator)) {
-                console.log('promoted spectator to player', players[nextSpectator].name);
             }
         }
 

@@ -34,12 +34,9 @@ export class Game {
     }
 
     removeSnake(id) {
-        console.log('removeSnake called:', id);
         const index = this.snakes.findIndex(s => s.id === id);
-        console.log('Found at index:', index);
         if (index !== -1) {
             this.snakes.splice(index, 1);
-            console.log('Snake removed, remaining:', this.snakes.map(s => s.id));
         }
     }
 

@@ -181,14 +181,14 @@ export class GameScreen {
         if (isHost) {
             const countdown = document.createElement("div");
             countdown.className = 'game-over-countdown';
-            countdown.textContent = 'Returning to lobby in 5...';
+            countdown.textContent = 'Continuing in 5...';
             gameOverEl.appendChild(countdown);
 
             let remaining = 5;
             this.autoReturnTimer = setInterval(() => {
                 remaining--;
                 if (remaining > 0) {
-                    countdown.textContent = `Returning to lobby in ${remaining}...`;
+                    countdown.textContent = `Continuing in ${remaining}...`;
                 } else {
                     clearInterval(this.autoReturnTimer);
                     this.autoReturnTimer = null;

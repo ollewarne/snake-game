@@ -136,26 +136,40 @@ export class Game {
     }
 
     checkSnakeCollisions() {
+        const toRespawn = new Set();
+
         for (const snake of this.snakes) {
-            if (snake.checkSelfCollision()) this.respawnSnake(snake);
+            if (!snake.alive) continue;
+            if (snake.checkSelfCollision()) toRespawn.add(snake);
         }
+
+        for (const snake of toRespawn) {
+            snake.alive = true;
+        }
+
 
         for (let i = 0; i < this.snakes.length; i++) {
             const snake = this.snakes[i];
-            if (!snake.alive) continue;
+            if (!snake.alive || snake.body.length === 0) continue;
 
             for (let j = 0; j < this.snakes.length; j++) {
                 if (i === j) continue;
-                if (snake.checkCollisionWithOther(this.snakes[j])) {
-                    this.respawnSnake(snake);
-                    break;
+                const other = this.snakes[j];
+                if (!other.alive || other.body.length === 0) continue;
+
+                const head = snake.head;
+                for (let k = 1; k < other.body.length; k++) {
+                    if (head.equals(other.body[k])) {
+                        toRespawn.add(snake);
+                        break;
+                    }
                 }
             }
         }
 
         const heads = new Map();
         for (const snake of this.snakes) {
-            if (!snake.alive) continue;
+            if (!snake.alive || snake.body.length === 0) continue;
             const key = snake.head.toString();
             if (!heads.has(key)) heads.set(key, []);
             heads.get(key).push(snake);
@@ -164,9 +178,13 @@ export class Game {
         for (const [, snakesAtPos] of heads) {
             if (snakesAtPos.length > 1) {
                 for (const snake of snakesAtPos) {
-                    this.respawnSnake(snake);
+                    toRespawn.add(snake);
                 }
             }
+        }
+
+        for (const snake of toRespawn) {
+            this.respawnSnake(snake);
         }
     }
 

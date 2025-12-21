@@ -81,18 +81,6 @@ export class Snake {
         const h = this.head;
         for (let i = 1; i < this.body.length; i++) {
             if (h.equals(this.body[i])) {
-                this.alive = false;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    checkCollisionWithOther(other) {
-        const h = this.body[0];
-        for (const seg of other.body) {
-            if (h.equals(seg)) {
-                this.alive = false;
                 return true;
             }
         }

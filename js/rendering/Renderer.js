@@ -10,6 +10,8 @@ export class Renderer {
 
         canvas.width = this.cellSize * this.gridCols;
         canvas.height = this.cellSize * this.gridRows;
+
+        this.scale = 1;
     }
 
     clear() {
@@ -79,6 +81,12 @@ export class Renderer {
 
         const icons = { food: "♦" };
         ctx.fillText(icons[pickup.type] ?? "?", cx, cy);
+    }
+
+    setScale(scale) {
+        this.scale = scale;
+        this.canvas.style.width = (this.canvas.width * scale) + 'px';
+        this.canvas.style.height = (this.canvas.height * scale) + 'px';
     }
 
     render(gameState) {

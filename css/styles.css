@@ -303,7 +303,7 @@ body {
 .game-controls {
     background: #0d0d14;
     border: 1px solid #1a1a2e;
-    border-left: 4px solid #b85a7a;
+    border-right: 4px solid #b85a7a;
     padding: 10px 20px;
     color: #666;
     font-size: 0.8em;
@@ -337,16 +337,23 @@ body {
 
 /* Leaderboard */
 .leaderboard {
-    width: 100%;
     background: #0d0d14;
     border: 1px solid #1a1a2e;
     border-top: 3px solid #2a9d6a;
+    width: 180px;
+    flex-shrink: 0;
 }
 
 .game-wrapper {
     display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.game-main {
+    display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 .game-bottom-bar {

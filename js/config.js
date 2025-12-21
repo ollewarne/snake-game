@@ -2,8 +2,8 @@ import { Vector } from "./utils/Vector.js";
 export const CONFIG = {
     // Grid
     cellSize: 20,
-    gridCols: 60,
-    gridRows: 50,
+    gridCols: 50,
+    gridRows: 40,
 
     playerLimit: 4,
 
@@ -30,27 +30,27 @@ export const CONFIG = {
     respawnTimer: 500,
     spawnPoints: [
         {
-            startPos: new Vector(10, 15),
+            startPos: new Vector(8, 12),
             dir: Vector.RIGHT,
         },
         {
-            startPos: new Vector(10, 45),
+            startPos: new Vector(8, 28),
             dir: Vector.RIGHT,
         },
         {
-            startPos: new Vector(50, 45),
+            startPos: new Vector(42, 28),
             dir: Vector.LEFT,
         },
         {
-            startPos: new Vector(50, 15),
+            startPos: new Vector(42, 12),
             dir: Vector.LEFT,
         },
         {
-            startPos: new Vector(30, 5),
+            startPos: new Vector(25, 5),
             dir: Vector.DOWN
         },
         {
-            startPos: new Vector(30, 45),
+            startPos: new Vector(25, 35),
             dir: Vector.UP
         }
     ]

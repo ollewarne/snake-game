@@ -14,6 +14,31 @@ export class GameScreen {
         this.elements.wrapper = document.createElement("div");
         this.elements.wrapper.className = 'game-wrapper';
 
+        this.elements.main = document.createElement("div");
+        this.elements.main.className = 'game-main';
+
+        this.elements.canvas = document.createElement("canvas");
+        this.elements.canvas.className = 'game-canvas';
+        this.elements.canvas.width = CONFIG.cellSize * CONFIG.gridCols;
+        this.elements.canvas.height = CONFIG.cellSize * CONFIG.gridRows;
+        this.elements.main.appendChild(this.elements.canvas);
+
+        this.elements.bottomBar = document.createElement("div");
+        this.elements.bottomBar.className = 'game-bottom-bar';
+
+        this.elements.gameInfo = document.createElement("div");
+        this.elements.gameInfo.className = 'game-info';
+        this.elements.bottomBar.appendChild(this.elements.gameInfo);
+
+        this.elements.controls = document.createElement("div");
+        this.elements.controls.className = 'game-controls';
+        this.elements.controls.textContent = 'Use WASD or Arrow Keys to move';
+        this.elements.bottomBar.appendChild(this.elements.controls);
+
+        this.elements.main.appendChild(this.elements.bottomBar);
+
+        this.elements.wrapper.appendChild(this.elements.main);
+
         this.elements.leaderboard = document.createElement("div");
         this.elements.leaderboard.className = 'leaderboard';
 
@@ -28,26 +53,6 @@ export class GameScreen {
 
         this.elements.wrapper.appendChild(this.elements.leaderboard);
 
-        this.elements.canvas = document.createElement("canvas");
-        this.elements.canvas.className = 'game-canvas';
-        this.elements.canvas.width = CONFIG.cellSize * CONFIG.gridCols;
-        this.elements.canvas.height = CONFIG.cellSize * CONFIG.gridRows;
-        this.elements.wrapper.appendChild(this.elements.canvas);
-
-        this.elements.bottomBar = document.createElement("div");
-        this.elements.bottomBar.className = 'game-bottom-bar';
-
-        this.elements.gameInfo = document.createElement("div");
-        this.elements.gameInfo.className = 'game-info';
-        this.elements.bottomBar.appendChild(this.elements.gameInfo);
-
-        this.elements.controls = document.createElement("div");
-        this.elements.controls.className = 'game-controls';
-        this.elements.controls.textContent = 'Use WASD or Arrow Keys to move';
-        this.elements.bottomBar.appendChild(this.elements.controls);
-
-        this.elements.wrapper.appendChild(this.elements.bottomBar);
-
         this.container.appendChild(this.elements.wrapper);
 
         this.elements.restartBtn = document.createElement("button");
@@ -55,6 +60,9 @@ export class GameScreen {
         this.elements.restartBtn.textContent = 'Back to Menu';
         this.elements.restartBtn.style.display = 'none';
         this.container.appendChild(this.elements.restartBtn);
+
+        this.updateScale();
+        window.addEventListener('resize', () => this.updateScale());
 
         document.body.appendChild(this.container);
 
@@ -64,6 +72,24 @@ export class GameScreen {
 
     getCanvas() {
         return this.elements.canvas;
+    }
+
+    updateScale() {
+        const canvas = this.elements.canvas;
+        const baseWidth = CONFIG.cellSize * CONFIG.gridCols;
+        const baseHeight = CONFIG.cellSize * CONFIG.gridRows;
+        const leaderboardWidth = 180 + 16; // width + gap
+        const padding = 64;
+
+        const availableWidth = window.innerWidth - leaderboardWidth - padding;
+        const availableHeight = window.innerHeight - 150;
+
+        const scaleX = availableWidth / baseWidth;
+        const scaleY = availableHeight / baseHeight;
+        const scale = Math.min(scaleX, scaleY, 1);
+
+        canvas.style.width = (baseWidth * scale) + 'px';
+        canvas.style.height = (baseHeight * scale) + 'px';
     }
 
     setGameInfo(text) {

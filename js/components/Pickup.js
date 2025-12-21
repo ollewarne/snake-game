@@ -12,7 +12,8 @@ export class Pickup {
     }
 
     applyTo(snake) {
-        snake.grow(1);
+        const growAmount = this.type === 'special' ? 3 : 1;
+        snake.grow(growAmount);
     }
 
     toJSON() {

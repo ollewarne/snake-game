@@ -89,7 +89,10 @@ export class Game {
 
     spawnPickup(type = "food") {
         const pos = this.findFreePosition();
-        const pickup = new Pickup(pos, type);
+
+        const isEdge = pos.x === 0 || pos.x === this.gridCols - 1 || pos.y === 0 || pos.y === this.gridRows - 1;
+        const pickupType = isEdge ? "special" : type;
+        const pickup = new Pickup(pos, pickupType);
         this.pickups.push(pickup);
         return pickup;
     }

@@ -28,6 +28,7 @@ let isHost = false;
 let isSpectator = false;
 
 let players = {};
+let spectatorQueue = [];
 let spawnIndex = 0;
 
 let readyClients = new Set();
@@ -174,6 +175,7 @@ function broadcastPlayerList() {
         api.transmit({
             type: 'playerList',
             players: players,
+            spectatorQueue: spectatorQueue,
             spawnIndex: spawnIndex,
             hostClientId: myClientId
         });
@@ -440,6 +442,7 @@ function handleGameMessage(clientId, data) {
             players = data.players;
             spawnIndex = data.spawnIndex;
             hostClientId = data.hostClientId;
+            spectatorQueue = data.spectatorQueue || [];
 
             if (players[myClientId]) {
                 isSpectator = players[myClientId].isSpectator;
@@ -448,7 +451,7 @@ function handleGameMessage(clientId, data) {
             break;
         case 'countdown':
             if (!isHost && lobby) {
-                lobby.startCountdown(data.seconds, () => {});
+                lobby.startCountdown(data.seconds, () => { });
             }
             break;
         case 'start':
@@ -508,6 +511,8 @@ function handlePlayerJoined(clientId, data) {
 
         if (!isNewSpectator) {
             spawnIndex++;
+        } else {
+            spectatorQueue.push(clientId);
         }
         updateLobbyDisplay();
         broadcastPlayerList();
@@ -520,11 +525,24 @@ function handlePlayerLeft(clientId) {
 
     if (players[clientId]) {
         const leftPlayer = players[clientId];
+        const wasPlayer = !leftPlayer.isSpectator;
         delete players[clientId];
+
+        const queueIndex = spectatorQueue.indexOf(spectatorId);
+        if (queueIndex > -1) {
+            spectatorQueue.splice(queueIndex, 1);
+        }
 
         if (game && leftPlayer.playerId) {
             console.log('Removing snake:', leftPlayer.playerId);
             game.removeSnake(leftPlayer.playerId);
+        }
+
+        if (wasPlayer && lobby && spectatorQueue.length > 0) {
+            const nextSpectator = spectatorQueue[0];
+            if (promoteSpectatorToPlayer(nextSpectator)) {
+                console.log('promoted spectator to player', players[nextSpectator].name);
+            }
         }
 
         if (lobby) {
@@ -535,6 +553,25 @@ function handlePlayerLeft(clientId) {
             broadcastPlayerList();
         }
     }
+}
+
+function promoteSpectatorToPlayer(spectatorId) {
+    const spectator = players[spectatorId];
+    if (!spectator || !spectator.isSpectator) return false;
+    const colors = generatePlayerColor();
+
+    specator.isSpectator = false;
+    spectator.playerId = `P${spawnIndex}`;
+    spectator.color = colors.color;
+    spectator.alternateColor = colors.alternateColor;
+
+    spawnIndex++;
+
+    const queueIndex = spectatorQueue.indexOf(spectatorId);
+    if (queueIndex > -1) {
+        spectatorQueue.splice(queueIndex, 1);
+    }
+    return true;
 }
 
 function cleanup() {

@@ -161,20 +161,6 @@ export class GameLobby {
         }
     }
 
-    setMetaInfo(items) {
-        this.elements.meta.textContent = '';
-        items.forEach((item, index) => {
-            if (index > 0) {
-                const dot = document.createElement('span');
-                dot.textContent = '•';
-                this.elements.meta.appendChild(dot);
-            }
-            const span = document.createElement('span');
-            span.textContent = item;
-            this.elements.meta.appendChild(span);
-        });
-    }
-
     setPlayers(players) {
         this.elements.players.textContent = '';
         this.playerCount = players.length;
@@ -199,25 +185,11 @@ export class GameLobby {
         this.updateStartButton();
     }
 
-    removePlayer(name) {
-        const li = this.elements.players.querySelector(`li[data-name="${name}"]`);
-        if (li) {
-            li.remove();
-            this.playerCount--;
-            this.updateStartButton();
-        }
-    }
-
     addSpectator(name) {
         const li = document.createElement('li');
         li.textContent = name;
         li.dataset.name = name;
         this.elements.spectators.appendChild(li);
-    }
-
-    removeSpectator(name) {
-        const li = this.elements.spectators.querySelector(`li[data-name="${name}"]`);
-        if (li) li.remove();
     }
 
     addChatMessage(sender, message) {
@@ -253,14 +225,6 @@ export class GameLobby {
             }
         }, 1000)
         return interval;
-    }
-
-    cancelCountdown(intervalId) {
-        if (intervalId) clearInterval(intervalId);
-        this.elements.countdown.style.display = 'none';
-        if (this.elements.startBtn) {
-            this.elements.startBtn.style.display = 'block';
-        }
     }
 
     remove() {

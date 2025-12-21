@@ -151,26 +151,6 @@ export class GameScreen {
         return entry;
     }
 
-    setStatusParts(parts) {
-        this.elements.status.textContent = '';
-
-        parts.forEach((part, index) => {
-            if (index > 0) {
-                const separator = document.createElement('span');
-                separator.textContent = ' | ';
-                this.elements.status.appendChild(separator);
-            }
-
-            const span = document.createElement('span');
-            span.textContent = part.text;
-            if (part.color) {
-                span.className = 'player-score';
-                span.style.borderLeftColor = part.color;
-            }
-            this.elements.status.appendChild(span);
-        });
-    }
-
     showGameOver(winner) {
         const gameOverEl = document.createElement("div");
         gameOverEl.className = 'game-over-overlay';

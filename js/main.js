@@ -633,7 +633,6 @@ function cleanup() {
     spawnIndex = 0;
     isHost = false;
     isSpectator = false;
-    nextColorIndex = 0;
     readyClients = new Set();
     expectedPlayerCount = 0;
     hostClientId = null;

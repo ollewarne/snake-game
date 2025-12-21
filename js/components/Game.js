@@ -256,14 +256,6 @@ export class Game {
         };
     }
 
-    getFullState() {
-        return {
-            snakes: this.snakes.map(s => s.toJSON()),
-            pickups: this.pickups.map(p => p.toJSON()),
-            timeRemainingMS: this.timeRemainingMS
-        };
-    }
-
     getNetworkState() {
         return {
             snakes: this.snakes.map(s => s.toNetworkState()),
@@ -295,27 +287,6 @@ export class Game {
                 newSnake.longestLength = snakeData.score;
                 newSnake.pendingGrow = snakeData.pendingGrow || 0;
                 this.snakes.push(newSnake);
-            }
-        }
-
-        const serverIds = new Set(data.snakes.map(s => s.id));
-        this.snakes = this.snakes.filter(s => serverIds.has(s.id));
-
-        this.pickups = data.pickups.map(p => Pickup.fromJSON(p));
-
-        if (typeof data.timeRemainingMS === 'number') {
-            this.timeRemainingMS = data.timeRemainingMS;
-        }
-    }
-
-    // Get state from server and apply locally for clients that are not the host
-    applyState(data) {
-        for (const snakeData of data.snakes) {
-            const existing = this.snakes.find(s => s.id === snakeData.id);
-            if (existing) {
-                existing.updateFromJSON(snakeData);
-            } else {
-                this.snakes.push(Snake.fromJSON(snakeData));
             }
         }
 

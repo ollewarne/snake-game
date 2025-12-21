@@ -86,10 +86,6 @@ export class Snake {
         return false;
     }
 
-    occupies(pos) {
-        return this.body.some(seg => seg.equals(pos));
-    }
-
     respawn(length, position, dir) {
         if (this.longestLength < length) this.longestLength = length;
         this.body = [position.clone()],

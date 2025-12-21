@@ -51,11 +51,30 @@ function setupBeforeUnload() {
     });
 }
 
-let nextColorIndex = 0;
+function getAvailableColorIndex() {
+    const usedIndices = new Set();
+    for (const clientId in players) {
+        const p = players[clientId];
+        if (!p.isSpectator && p.colorIndex !== undefined) {
+            usedIndices.add(p.colorIndex);
+        }
+    }
+
+    for (let i = 0; i < playerColors.length; i++) {
+        if (!usedIndices.has(i)) {
+            return i;
+        }
+    }
+
+    return nextColorIndex % playerColors.length;
+}
+
 function generatePlayerColor() {
-    const hue = playerColors[nextColorIndex % playerColors.length].hue;
-    nextColorIndex++;
+    const colorIndex = getAvailableColorIndex();
+    const hue = playerColors[colorIndex].hue;
+
     return {
+        colorIndex: colorIndex,
         color: `hsl(${hue}, 70%, 50%)`,
         alternateColor: `hsl(${hue}, 70%, 35%)`
     };

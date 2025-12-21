@@ -49,7 +49,7 @@ export class Renderer {
     }
 
     drawSnake(snake) {
-        if (!snake.alive || snake.respawning || snake.body.length === 0) return;
+        if (!snake.alive || snake.respawning || !snake.body || snake.body.length < 2) return;
 
         const points = snake.body.map(seg => this.getCellCenter(seg));
         const thickness = this.cellSize * 0.65;

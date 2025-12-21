@@ -528,7 +528,7 @@ function handlePlayerLeft(clientId) {
         const wasPlayer = !leftPlayer.isSpectator;
         delete players[clientId];
 
-        const queueIndex = spectatorQueue.indexOf(spectatorId);
+        const queueIndex = spectatorQueue.indexOf(clientId);
         if (queueIndex > -1) {
             spectatorQueue.splice(queueIndex, 1);
         }

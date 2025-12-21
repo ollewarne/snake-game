@@ -388,14 +388,19 @@ function updateGameUI(state) {
 
     let tx = api.stats.tx.avgBytesPerSec;
     let rx = api.stats.rx.avgPacketsPerSec;
-    let statusText = `TX: ${tx} | RX: ${rx} | Time: ${state.timeRemaining}s`;
-    for (const snake of state.snakes) {
-        const playerInfo = findPlayerByPlayerId(snake.id);
-        const name = playerInfo ? playerInfo.name : snake.id;
-        statusText += ` | ${name}: ${snake.longestLength}`;
-    }
+    gameScreen.setGameInfo(`TX: ${tx} | RX: ${rx} | Time: ${state.timeRemaining}s`);
 
-    gameScreen.setStatus(statusText);
+    const leaderBoardData = state.snakes.map(snake => {
+        const playerInfo = findPlayerByPlayerId(snake.id);
+        return {
+            name: playerInfo ? playerInfo.name : snake.id,
+            score: snake.longestLength,
+            color: snake.color || playerInfo?.color || '#888',
+            isAlive: snake.alive
+        }
+    })
+
+    gameScreen.updateLeaderboard(leaderBoardData);
 }
 
 function handleGameOver(state) {

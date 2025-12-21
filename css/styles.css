@@ -296,26 +296,19 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 16px;
-    gap: 16px;
+    gap: 12px;
+    min-height: 100vh;
 }
 
-.game-status {
+.game-controls {
     background: #0d0d14;
     border: 1px solid #1a1a2e;
-    border-left: 4px solid #2a9d6a;
-    padding: 12px 24px;
-    color: #e0e0e0;
-    font-size: 0.9em;
-    min-width: 400px;
+    border-left: 4px solid #b85a7a;
+    padding: 10px 20px;
+    color: #666;
+    font-size: 0.8em;
     text-align: center;
-}
-
-.game-status .player-score {
-    display: inline-block;
-    margin: 0 12px;
-    padding: 4px 8px;
-    background: #12121a;
-    border-left: 3px solid var(--player-color, #2a9d6a);
+    margin-top: 8px;
 }
 
 .game-canvas {
@@ -340,6 +333,97 @@ body {
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 2px;
+}
+
+/* Leaderboard */
+.leaderboard {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    width: 200px;
+    background: #0d0d14;
+    border: 1px solid #1a1a2e;
+    border-top: 3px solid #2a9d6a;
+    z-index: 50;
+}
+
+.leaderboard-title {
+    padding: 10px 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #2a9d6a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 1px solid #1a1a2e;
+    text-align: center;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+}
+
+.leaderboard-entry {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 8px;
+    transition: transform 0.3s ease, opacity 0.2s, background 0.2s;
+}
+
+.leaderboard-entry.leader {
+    background: rgba(42, 157, 106, 0.15);
+}
+
+.leaderboard-entry.dead {
+    opacity: 0.5;
+}
+
+.leaderboard-rank {
+    width: 20px;
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: bold;
+}
+
+.leaderboard-entry.leader .leaderboard-rank {
+    color: #2a9d6a;
+}
+
+.leaderboard-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.leaderboard-name {
+    flex: 1;
+    font-size: 0.85rem;
+    color: #e0e0e0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.leaderboard-score {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff;
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Game info bar */
+.game-info {
+    background: #0d0d14;
+    border: 1px solid #1a1a2e;
+    border-left: 4px solid #2a9d6a;
+    padding: 8px 16px;
+    color: #888;
+    font-size: 0.8em;
+    text-align: center;
 }
 
 ::-webkit-scrollbar {

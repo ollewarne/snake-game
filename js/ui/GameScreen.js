@@ -11,20 +11,34 @@ export class GameScreen {
         this.container = document.createElement("div");
         this.container.className = 'game-screen';
 
-        this.elements.controls = document.createElement("div");
-        this.elements.controls.className = 'game-status';
-        this.elements.controls.textContent = 'Use WASD or arrow keys to control the snake';
-        this.container.appendChild(this.elements.controls);
+        this.elements.gameInfo = document.createElement("div");
+        this.elements.gameInfo.className = 'game-info';
+        this.container.appendChild(this.elements.gameInfo);
 
-        this.elements.status = document.createElement("div");
-        this.elements.status.className = 'game-status';
-        this.container.appendChild(this.elements.status);
+        this.elements.leaderboard = document.createElement("div");
+        this.elements.leaderboard.className = 'leaderboard';
+
+        const leaderboardTitle = document.createElement("div");
+        leaderboardTitle.className = 'leaderboard-title';
+        leaderboardTitle.textContent = 'LEADERBOARD';
+        this.elements.leaderboard.appendChild(leaderboardTitle);
+
+        this.elements.leaderboardList = document.createElement("div");
+        this.elements.leaderboardList.className = 'leaderboard-list';
+        this.elements.leaderboard.appendChild(this.elements.leaderboardList);
+
+        this.container.appendChild(this.elements.leaderboard);
 
         this.elements.canvas = document.createElement("canvas");
         this.elements.canvas.className = 'game-canvas';
         this.elements.canvas.width = CONFIG.cellSize * CONFIG.gridCols;
         this.elements.canvas.height = CONFIG.cellSize * CONFIG.gridRows;
         this.container.appendChild(this.elements.canvas);
+
+        this.elements.controls = document.createElement("div");
+        this.elements.controls.className = 'game-controls';
+        this.elements.controls.textContent = 'Use WASD or Arrow Keys to move';
+        this.container.appendChild(this.elements.controls);
 
         this.elements.restartBtn = document.createElement("button");
         this.elements.restartBtn.className = 'lobby-btn';
@@ -42,8 +56,63 @@ export class GameScreen {
         return this.elements.canvas;
     }
 
-    setStatus(text) {
-        this.elements.status.textContent = text;
+    setGameInfo(text) {
+        this.elements.gameInfo.textContent = text;
+    }
+
+    updateLeaderBoard(players) {
+        const sorted = [...players].sort((a, b) => b.score - a.score);
+
+        sorted.forEach((player, index) => {
+            let entry = this.elements.leaderboardList.querySelector(
+                `[data-player-id="${player.id}"]`
+            );
+
+            if (!entry) {
+                entry = this.createLeaderboardEntry(player);
+                this.elements.leaderboardList.appendChild(entry);
+            }
+
+            entry.querySelector('.leaderboard-rank').textContent = `${index + 1}.`;
+            entry.querySelector('.leaderboard-score').textContent = player.score;
+            entry.style.order = index;
+            entry.classList.toggle('leader', index === 0 && sorted.length > 1);
+            entry.classList.toggle('dead', !player.isAlive);
+        });
+
+        const currentIds = new Set(players.map(p => p.id));
+        const entries = this.elements.leaderboardList.querySelectorAll('.leaderboard-entry');
+        entries.forEach(entry => {
+            if (!currentIds.has(entry.dataset.playerId)) {
+                entry.remove();
+            }
+        });
+    }
+
+    createLeaderboardEntry(player) {
+        const entry = document.createElement('div');
+        entry.className = 'leaderboard-entry';
+        entry.dataset.playerId = player.id;
+
+        const rank = document.createElement('span');
+        rank.className = 'leaderboard-rank';
+        entry.appendChild(rank);
+
+        const colorDot = document.createElement('span');
+        colorDot.className = 'leaderboard-color';
+        colorDot.style.backgroundColor = player.color;
+        entry.appendChild(colorDot);
+
+        const name = document.createElement('span');
+        name.className = 'leaderboard-name';
+        name.textContent = player.name;
+        entry.appendChild(name);
+
+        const score = document.createElement('span');
+        score.className = 'leaderboard-score';
+        entry.appendChild(score);
+
+        return entry;
     }
 
     setStatusParts(parts) {

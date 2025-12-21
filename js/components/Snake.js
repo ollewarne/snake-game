@@ -7,7 +7,6 @@ export class Snake {
         this.id = opts.id ?? Math.random().toString(36).slice(2, 8);
 
         this.color = opts.color;
-        this.alternateColor = opts.alternateColor
         this.alive = true;
 
         const start = opts.startPos ?? { x: 20, y: 15 };
@@ -106,7 +105,6 @@ export class Snake {
         return {
             id: this.id,
             color: this.color,
-            alternateColor: this.alternateColor,
             head: this.body.length > 0 ? this.head.toJSON() : null,
             dir: this.dir.toJSON(),
             length: this.body.length,
@@ -121,7 +119,6 @@ export class Snake {
 
         this.respawning = data.respawning || false;
         this.color = data.color || this.color;
-        this.alternateColor = data.alternateColor || this.alternateColor;
 
         if (data.respawning || data.head === null) {
             this.body = [];
@@ -161,7 +158,6 @@ export class Snake {
         return {
             id: this.id,
             color: this.color,
-            alternateColor: this.alternateColor,
             alive: this.alive,
             score: this.longestLength,
             body: this.body.map(v => v.toJSON()),
@@ -173,7 +169,6 @@ export class Snake {
         const snake = new Snake({
             id: data.id,
             color: data.color,
-            alternateColor: data.alternateColor,
             startPos: Vector.fromJSON(data.body[0]),
             dir: Vector.fromJSON(data.dir)
         });

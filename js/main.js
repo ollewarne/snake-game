@@ -76,7 +76,6 @@ function generatePlayerColor() {
     return {
         colorIndex: colorIndex,
         color: `hsl(${hue}, 70%, 50%)`,
-        alternateColor: `hsl(${hue}, 70%, 35%)`
     };
 }
 
@@ -108,8 +107,7 @@ function showSelectionUi() {
                 playerId: `P${spawnIndex}`,
                 isSpectator: false,
                 colorIndex: colors.colorIndex,
-                color: colors.color,
-                alternateColor: colors.alternateColor
+                color: colors.color
             };
             spawnIndex++;
 
@@ -214,11 +212,13 @@ function startSinglePlayer() {
 
     game.init();
 
+    const colors = generatePlayerColor();
     const spawn = CONFIG.spawnPoints[0];
     const player = game.addSnake({
         id: 'P1',
         startPos: spawn.startPos,
-        dir: spawn.dir
+        dir: spawn.dir,
+        color: colors.color
     })
 
     game.spawnPickup('food');
@@ -270,7 +270,6 @@ function startMultiplayerGame() {
                 startPos: spawn.startPos,
                 dir: spawn.dir,
                 color: p.color,
-                alternateColor: p.alternateColor
             });
 
             spawnIdx++;
@@ -532,8 +531,7 @@ function handlePlayerJoined(clientId, data) {
             playerId: isNewSpectator ? null : `P${spawnIndex}`,
             isSpectator: isNewSpectator,
             colorIndex: colors.colorIndex,
-            color: colors?.color || null,
-            alternateColor: colors?.alternateColor || null
+            color: colors?.color || null
         };
 
         if (!isNewSpectator) {
@@ -591,7 +589,6 @@ function promoteSpectatorToPlayer(spectatorId) {
     spectator.playerId = `P${spawnIndex}`;
     spectator.colorIndex = colors.colorIndex;
     spectator.color = colors.color;
-    spectator.alternateColor = colors.alternateColor;
 
     spawnIndex++;
 

@@ -399,7 +399,13 @@ function updateGameUI(state) {
 function handleGameOver(state) {
     updateGameUI(state);
     const winner = game.getWinner();
-    gameScreen.showGameOver(winner ? winner.id : null);
+    gameScreen.showGameOver(winner ? winner.id : null, true,() => {
+        cleanup();
+        startSinglePlayer();
+    }, () => {
+        cleanup();
+        showSelectionUi();
+    }, 'Play again?');
 }
 
 function handleMultiplayerGameOver(state) {

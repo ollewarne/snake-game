@@ -145,7 +145,7 @@ export class GameScreen {
         return entry;
     }
 
-    showGameOver(winner, isHost = false, onBackToLobby = null, onLeave = null) {
+    showGameOver(winner, isHost = false, onBackToLobby = null, onLeave = null, backButtonText = 'Back to Lobby') {
         const gameOverEl = document.createElement("div");
         gameOverEl.className = 'game-over-overlay';
 
@@ -156,7 +156,7 @@ export class GameScreen {
         if (isHost) {
             const lobbyBtn = document.createElement("button");
             lobbyBtn.className = 'lobby-btn';
-            lobbyBtn.textContent = 'Back to Lobby';
+            lobbyBtn.textContent = backButtonText;
             lobbyBtn.addEventListener('click', () => {
                 if (this.autoReturnTimer) {
                     clearTimeout(this.autoReturnTimer);

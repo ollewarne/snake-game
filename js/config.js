@@ -9,7 +9,7 @@ export const CONFIG = {
 
     // Timing
     tickMS: 100,
-    gameDurationMS: 180000, // 3 minutes
+    gameDurationMS: 90000, // 1,5 minutes
 
     // Snake
     initialLength: 3,

@@ -38,6 +38,50 @@ body {
 /* =====================
    SELECTION UI
    ===================== */
+.selection-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    min-height: calc(100vh - 64px);
+}
+
+.selection-guide {
+    width: 280px;
+    padding: 1.5rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-default);
+    border-top: 4px solid var(--accent-secondary);
+}
+
+.selection-guide h2 {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: var(--accent-secondary);
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.selection-guide h3 {
+    font-size: 0.75rem;
+    color: var(--text-primary);
+    margin: 1rem 0 0.25rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.selection-guide h3:first-of-type {
+    margin-top: 0;
+}
+
+.selection-guide p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+}
+
 .selection-container {
     width: 320px;
     padding: 2rem;

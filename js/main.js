@@ -459,7 +459,7 @@ function handleGameMessage(clientId, data) {
         case 'initialState':
             if (!isHost && game) {
                 game.applyNetworkState(data.state);
-                updateGameUI(game.getState);
+                updateGameUI(game.getState());
             }
             break;
         case 'ready':

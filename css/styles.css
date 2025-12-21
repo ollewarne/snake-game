@@ -328,7 +328,7 @@ body {
     background: var(--bg-panel);
     border: 1px solid var(--border-default);
     border-right: 4px solid var(--accent-secondary);
-    padding: 10px 20px;
+    padding: 8px 16px;
     color: var(--text-dim);
     font-size: 0.8em;
     text-align: center;
@@ -341,7 +341,7 @@ body {
 }
 
 .game-over-overlay {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -378,6 +378,7 @@ body {
 .game-main {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .game-bottom-bar {

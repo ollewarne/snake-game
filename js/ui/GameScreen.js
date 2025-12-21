@@ -159,7 +159,7 @@ export class GameScreen {
         text.textContent = winner ? `Winner: ${winner}` : 'Game Over!';
         gameOverEl.appendChild(text);
 
-        this.container.appendChild(gameOverEl);
+        this.elements.main.appendChild(gameOverEl);
         this.elements.restartBtn.style.display = 'block';
     }
 

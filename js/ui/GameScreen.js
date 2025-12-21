@@ -60,7 +60,7 @@ export class GameScreen {
         this.elements.gameInfo.textContent = text;
     }
 
-    updateLeaderBoard(players) {
+    updateLeaderboard(players) {
         const sorted = [...players].sort((a, b) => b.score - a.score);
 
         sorted.forEach((player, index) => {

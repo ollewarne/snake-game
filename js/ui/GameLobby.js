@@ -52,6 +52,12 @@ export class GameLobby {
         });
         actions.appendChild(this.elements.leaveBtn);
 
+        this.elements.countdown = document.createElement('div');
+        this.elements.countdown.className = 'lobby-countdown';
+        this.elements.countdown.style.display = 'none';
+        this.elements.countdown.textContent = "";
+        this.actions.appendChild(this.elements.countdown);
+
         header.appendChild(actions);
         document.body.appendChild(header);
 
@@ -222,6 +228,39 @@ export class GameLobby {
         msg.appendChild(document.createTextNode(message));
         this.elements.chat.appendChild(msg);
         this.elements.chat.scrollTop = this.elements.chat.scrollHeight;
+    }
+
+    startCountdown(seconds, onComplete) {
+        let remaining = seconds;
+
+        if (this.elements.startBtn) {
+            this.elements.startBtn.style.display = 'none';
+        }
+
+        this.elements.countdown.style.display = 'block';
+        this.elements.countdown.textContent = `Game starting in ${remaining}...`;
+
+        const interval = setInterval(() => {
+            remaining--;
+            if (remaining > 0) {
+                this.elements.countdown.textContent = `Game starting in ${remaining}...`;
+            } else {
+                this.elements.countdown.textContent = "Game starting now!";
+                clearInterval(interval);
+                setTimeout(() => {
+                    if (onComplete && typeof onComplete === 'function') onComplete();
+                }, 500)
+            }
+        }, 1000)
+        return interval;
+    }
+
+    cancelCountdown(intervalId) {
+        if (intervalId) clearInterval(intervalId);
+        this.elements.countdown.style.display = 'none';
+        if (this.elements.startBtn) {
+            this.elements.startBtn.style.display = 'block';
+        }
     }
 
     remove() {

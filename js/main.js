@@ -131,8 +131,12 @@ function showLobby(session, hostName) {
 
     lobby.onStart = () => {
         if (isHost) {
-            api.transmit({ type: 'start' });
-            startMultiplayerGame();
+            const COUNTDOWN_SECONDS = 3;
+            api.transmit({ type: 'countdown', seconds: COUNTDOWN_SECONDS })
+            lobby.startCountdown(COUNTDOWN_SECONDS, () => {
+                api.transmit({ type: 'start' });
+                startMultiplayerGame();
+            })
         }
     }
 
@@ -441,6 +445,11 @@ function handleGameMessage(clientId, data) {
                 isSpectator = players[myClientId].isSpectator;
             }
             updateLobbyDisplay();
+            break;
+        case 'countdown':
+            if (!isHost && lobby) {
+                lobby.startCountdown(data.seconds, () => {});
+            }
             break;
         case 'start':
             if (!isHost) {

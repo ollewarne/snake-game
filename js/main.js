@@ -388,7 +388,7 @@ function updateGameUI(state) {
         return {
             id: snake.id,
             name: playerInfo ? playerInfo.name : snake.id,
-            score: snake.longestLength,
+            score: snake.body.length,
             color: snake.color || playerInfo?.color || '#888',
             isAlive: snake.alive
         }

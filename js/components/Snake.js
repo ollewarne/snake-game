@@ -14,8 +14,6 @@ export class Snake {
         this.dir = dir.clone();
         this.lastMoveDir = dir.clone();
 
-        this.longestLength = CONFIG.initialLength;
-
         this.body = [];
         for (let i = 0; i < opts.initialLength ?? 3; i++) {
             this.body.push(new Vector(
@@ -64,7 +62,6 @@ export class Snake {
 
     grow(n = 1) {
         this.pendingGrow += n;
-        if (this.body.length >= this.longestLength) this.longestLength += n;
     }
 
     checkBorderDeath(maxCols, maxRows) {
@@ -87,7 +84,6 @@ export class Snake {
     }
 
     respawn(length, position, dir) {
-        if (this.longestLength < length) this.longestLength = length;
         this.body = [position.clone()],
         this.dir = dir.clone();
         this.lastMoveDir = dir.clone();
@@ -106,7 +102,7 @@ export class Snake {
             length: this.body.length,
             alive: this.alive,
             respawning: this.respawning,
-            score: this.longestLength,
+            score: this.body.length,
             pendingGrow: this.pendingGrow
         }
     }
@@ -119,7 +115,6 @@ export class Snake {
         if (data.respawning || data.head === null) {
             this.body = [];
             this.alive = data.alive;
-            this.longestLength = data.score;
             return;
         }
 
@@ -146,7 +141,6 @@ export class Snake {
 
         this.dir = newDir;
         this.alive = data.alive;
-        this.longestLength = data.score;
         this.pendingGrow = data.pendingGrow || 0;
     }
 
@@ -155,7 +149,7 @@ export class Snake {
             id: this.id,
             color: this.color,
             alive: this.alive,
-            score: this.longestLength,
+            score: this.body.length,
             body: this.body.map(v => v.toJSON()),
             dir: this.dir.toJSON(),
         };
@@ -169,7 +163,6 @@ export class Snake {
             dir: Vector.fromJSON(data.dir)
         });
         snake.alive = data.alive;
-        snake.longestLength = data.score;
         snake.body = data.body.map(v => Vector.fromJSON(v));
         return snake;
     }
@@ -177,7 +170,6 @@ export class Snake {
     // Update from host player?
     updateFromJSON(data) {
         this.alive = data.alive;
-        this.longestLength = data.score;
         this.body = data.body.map(v => Vector.fromJSON(v));
         this.dir = Vector.fromJSON(data.dir);
     }

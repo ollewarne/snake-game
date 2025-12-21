@@ -27,6 +27,8 @@ let hostClientId = null;
 let isHost = false;
 let isSpectator = false;
 
+let gameInProgress = false;
+
 let players = {};
 let spectatorQueue = [];
 let spawnIndex = 0;
@@ -238,6 +240,8 @@ function startSinglePlayer() {
 }
 
 function startMultiplayerGame() {
+    gameInProgress = true;
+
     if (lobby) {
         lobby.remove();
         lobby = null;
@@ -315,11 +319,6 @@ function startMultiplayerGame() {
     }
 
     updateGameUI(game.getState());
-
-    gameScreen.onRestart(() => {
-        cleanup();
-        location.reload();
-    });
 }
 
 function joinMultiplayerGame() {
@@ -363,11 +362,6 @@ function joinMultiplayerGame() {
     }
 
     api.transmit({ type: 'ready', clientId: myClientId }, hostClientId)
-
-    gameScreen.onRestart(() => {
-        cleanup();
-        location.reload();
-    });
 }
 
 function checkAllReady() {
@@ -414,11 +408,52 @@ function handleMultiplayerGameOver(state) {
     const winner = game.getWinner();
     const playerInfo = winner ? findPlayerByPlayerId(winner.id) : null;
     const winnerName = playerInfo ? playerInfo.name : (winner ? winner.id : null);
-    gameScreen.showGameOver(winnerName);
 
     if (isHost) {
         api.transmit({ type: 'gameOver', winnerId: winner?.id, winnerName: winnerName })
+        gameScreen.showGameOver(winnerName, true, () => {
+            api.transmit({ type: 'returnToLobby' })
+            returnToLobby();
+        }, () => {
+            api.leave();
+            cleanup();
+            location.reload();
+        });
+
+    } else {
+        gameScreen.showGameOver(winnerName, false, null, () => {
+            api.leave();
+            cleanup();
+            location.reload();
+        });
     }
+}
+
+function returnToLobby() {
+    gameInProgress = false;
+    if (input) {
+        input.stop();
+        input = null;
+    }
+
+    if (game) {
+        game.stop();
+        game = null;
+    }
+
+    renderer = null;
+
+    if (gameScreen) {
+        gameScreen.remove();
+        gameScreen = null;
+    }
+
+    promoteAllEligebleSpectators();
+
+    showLobby(api.sessionId, players[hostClientId]?.name || myName);
+    updateLobbyDisplay();
+
+    if (isHost) broadcastPlayerList();
 }
 
 function findPlayerByPlayerId(playerId) {
@@ -514,7 +549,11 @@ function handleGameMessage(clientId, data) {
                 gameScreen.showGameOver(data.winnerName);
             }
             break;
-
+        case 'returnToLobby':
+            if (!isHost) {
+                returnToLobby();
+            }
+            break;
     }
 }
 
@@ -522,7 +561,7 @@ function handlePlayerJoined(clientId, data) {
 
     if (isHost && data.name) {
         const currentPlayerCount = Object.values(players).filter(p => !p.isSpectator).length;
-        const isNewSpectator = currentPlayerCount >= MAX_PLAYERS;
+        const isNewSpectator = currentPlayerCount >= MAX_PLAYERS || gameInProgress;
 
         const colors = isNewSpectator ? null : generatePlayerColor();
 
@@ -599,6 +638,19 @@ function promoteSpectatorToPlayer(spectatorId) {
     return true;
 }
 
+function promoteAllEligebleSpectators() {
+    let playerCount = Object.values(players).filter(p => !p.isSpectator).length;
+
+    while (playerCount < MAX_PLAYERS && spectatorQueue.length > 0) {
+        const nextSpectator = spectatorQueue[0];
+        if (promoteSpectatorToPlayer(nextSpectator)) {
+            playerCount++
+        } else {
+            break;
+        }
+    }
+}
+
 function cleanup() {
     if (input) {
         input.stop();
@@ -636,6 +688,7 @@ function cleanup() {
     readyClients = new Set();
     expectedPlayerCount = 0;
     hostClientId = null;
+    gameInProgress = false;
 }
 
 init();

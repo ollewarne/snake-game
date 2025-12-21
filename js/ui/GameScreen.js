@@ -55,12 +55,6 @@ export class GameScreen {
 
         this.container.appendChild(this.elements.wrapper);
 
-        this.elements.restartBtn = document.createElement("button");
-        this.elements.restartBtn.className = 'lobby-btn';
-        this.elements.restartBtn.textContent = 'Back to Menu';
-        this.elements.restartBtn.style.display = 'none';
-        this.container.appendChild(this.elements.restartBtn);
-
         this.updateScale();
         window.addEventListener('resize', () => this.updateScale());
 
@@ -151,7 +145,7 @@ export class GameScreen {
         return entry;
     }
 
-    showGameOver(winner) {
+    showGameOver(winner, isHost = false, onBackToLobby = null, onLeave = null) {
         const gameOverEl = document.createElement("div");
         gameOverEl.className = 'game-over-overlay';
 
@@ -159,12 +153,56 @@ export class GameScreen {
         text.textContent = winner ? `Winner: ${winner}` : 'Game Over!';
         gameOverEl.appendChild(text);
 
-        this.elements.main.appendChild(gameOverEl);
-        this.elements.restartBtn.style.display = 'block';
-    }
+        if (isHost) {
+            const lobbyBtn = document.createElement("button");
+            lobbyBtn.className = 'lobby-btn';
+            lobbyBtn.textContent = 'Back to Lobby';
+            lobbyBtn.addEventListener('click', () => {
+                if (this.autoReturnTimer) {
+                    clearTimeout(this.autoReturnTimer);
+                }
+                if (onBackToLobby) onBackToLobby();
+            });
+            gameOverEl.appendChild(lobbyBtn);
+        }
 
-    onRestart(callback) {
-        this.elements.restartBtn.addEventListener("click", callback);
+        const leaveBtn = document.createElement("button");
+        leaveBtn.className = 'lobby-btn btn-secondary';
+        leaveBtn.textContent = 'Leave Session';
+        leaveBtn.style.marginTop = '8px';
+        leaveBtn.addEventListener('click', () => {
+            if (this.autoReturnTimer) {
+                clearTimeout(this.autoReturnTimer);
+            }
+            if (onLeave) onLeave();
+        });
+        gameOverEl.appendChild(leaveBtn);
+
+        if (isHost) {
+            const countdown = document.createElement("div");
+            countdown.className = 'game-over-countdown';
+            countdown.textContent = 'Returning to lobby in 5...';
+            gameOverEl.appendChild(countdown);
+
+            let remaining = 5;
+            this.autoReturnTimer = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    countdown.textContent = `Returning to lobby in ${remaining}...`;
+                } else {
+                    clearInterval(this.autoReturnTimer);
+                    this.autoReturnTimer = null;
+                    if (onBackToLobby) onBackToLobby();
+                }
+            }, 1000);
+        } else {
+            const waiting = document.createElement("div");
+            waiting.className = 'game-over-countdown';
+            waiting.textContent = 'Waiting for host...';
+            gameOverEl.appendChild(waiting);
+        }
+
+        this.elements.main.appendChild(gameOverEl);
     }
 
     remove() {

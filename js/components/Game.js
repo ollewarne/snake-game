@@ -239,7 +239,7 @@ export class Game {
 
         let winner = this.snakes[0];
         for (const snake of this.snakes) {
-            if (snake.longestLength > winner.longestLength) {
+            if (snake.body.length > winner.body.length) {
                 winner = snake;
             }
         }

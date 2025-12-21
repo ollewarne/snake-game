@@ -85,7 +85,7 @@ export class Snake {
 
     respawn(length, position, dir) {
         this.body = [position.clone()],
-        this.dir = dir.clone();
+            this.dir = dir.clone();
         this.lastMoveDir = dir.clone();
         this.pendingGrow = CONFIG.initialLength - 1;
         this.alive = true;
@@ -108,7 +108,6 @@ export class Snake {
     }
 
     updateFromNetworkState(data) {
-
         this.respawning = data.respawning || false;
         this.color = data.color || this.color;
 
@@ -118,17 +117,23 @@ export class Snake {
             return;
         }
 
-        const newHead = Vector.fromJSON(data.head);
-        const newDir = Vector.fromJSON(data.dir);
+        const headX = data.head.x;
+        const headY = data.head.y;
+        const dirX = data.dir.x;
+        const dirY = data.dir.y;
 
-        const headMoved = !this.head.equals(newHead);
-        const dirChanged = !this.dir.equals(newDir);
+        const headMoved = !this.head || this.head.x !== headX || this.head.y !== headY;
+        const dirChanged = this.dir.x !== dirX || this.dir.y !== dirY;
+
+        if (dirChanged) {
+            this.dir.set(dirX, dirY);
+        }
 
         if (!this.alive && data.alive) {
-            this.body = [newHead.clone()];
+            this.body = [new Vector(headX, headY)];
             this.pendingGrow = data.length - 1;
         } else if (headMoved && data.alive) {
-            this.body.unshift(newHead.clone());
+            this.body.unshift(new Vector(headX, headY));
 
             while (this.body.length > data.length) {
                 this.body.pop();
@@ -139,7 +144,6 @@ export class Snake {
             }
         }
 
-        this.dir = newDir;
         this.alive = data.alive;
         this.pendingGrow = data.pendingGrow || 0;
     }

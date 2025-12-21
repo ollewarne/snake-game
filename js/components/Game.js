@@ -293,7 +293,24 @@ export class Game {
         const serverIds = new Set(data.snakes.map(s => s.id));
         this.snakes = this.snakes.filter(s => serverIds.has(s.id));
 
-        this.pickups = data.pickups.map(p => Pickup.fromJSON(p));
+        const incomingIds = new Set(data.pickups.map(p => p.id));
+
+        for (let i = this.pickups.length - 1; i >= 0; i--) {
+            if (!incomingIds.has(this.pickups[i].id)) {
+                this.pickups.splice(i, 1);
+            }
+        }
+
+        for (const pickupData of data.pickups) {
+            const existing = this.pickups.find(p => p.id === pickupData.id);
+            if (existing) {
+                existing.position.x = pickupData.position.x;
+                existing.position.y = pickupData.position.y;
+                existing.type = pickupData.type;
+            } else {
+                this.pickups.push(Pickup.fromJSON(pickupData));
+            }
+        }
 
         if (typeof data.timeRemainingMS === 'number') {
             this.timeRemainingMS = data.timeRemainingMS;

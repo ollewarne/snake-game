@@ -28,6 +28,12 @@ export class Vector {
         return new Vector(this.x, this.y);
     }
 
+    set(x, y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
     toString() {
         return `${this.x},${this.y}`;
     }
